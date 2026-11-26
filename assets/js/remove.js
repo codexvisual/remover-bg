@@ -97,6 +97,24 @@
     p.classList.add('hidden');
     if (p.dataset.url) { URL.revokeObjectURL(p.dataset.url); delete p.dataset.url; }
     p.removeAttribute('src');
+    var pair = $('processingPair');
+    if (pair) pair.classList.add('hidden');
+  }
+
+  /* A local cut-out shown instantly beside the upload while the AI works. */
+  function showQuickPreview(img) {
+    var pair = $('processingPair'), c = $('processingCutout');
+    if (!pair || !c || !window.BackgroundEngine || !window.BackgroundEngine.quick) return;
+    try {
+      Promise.resolve(window.BackgroundEngine.quick(img)).then(function (q) {
+        if (!q || !q.width) return;
+        var scale = Math.min(1, 300 / Math.max(q.width, q.height));
+        c.width = Math.max(1, Math.round(q.width * scale));
+        c.height = Math.max(1, Math.round(q.height * scale));
+        c.getContext('2d').drawImage(q, 0, 0, c.width, c.height);
+        pair.classList.remove('hidden');
+      });
+    } catch (e) { /* preview only — the AI result will follow */ }
   }
 
   function showError(message) {
@@ -357,6 +375,7 @@
     try {
       setProgress(6, 'Reading ' + (file.name || 'image') + '…');
       var img = await fileToImage(file);
+      showQuickPreview(img);
       var cutout = await removeBackground(file, setProgress, { sourceImage: img });
       setProgress(100, 'Ready!');
       showResult(file, img, cutout);

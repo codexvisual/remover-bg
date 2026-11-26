@@ -319,6 +319,7 @@
     remove: remove,
     fileToImage: fileToImage,
     makeCanvas: makeCanvas,
+    quick: function (img) { return quickRemove(img, function () {}); },
     warmup: warmAi
   };
 

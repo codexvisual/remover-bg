@@ -44,6 +44,24 @@
     p.classList.add('hidden');
     if (p.dataset.url) { URL.revokeObjectURL(p.dataset.url); delete p.dataset.url; }
     p.removeAttribute('src');
+    var pair = $('processingPair');
+    if (pair) pair.classList.add('hidden');
+  }
+
+  /* Instant local cut-out shown while the model is still running. */
+  function showQuickPreview(img) {
+    var pair = $('processingPair'), c = $('processingCutout');
+    if (!pair || !c || !window.BackgroundEngine || !window.BackgroundEngine.quick) return;
+    try {
+      Promise.resolve(window.BackgroundEngine.quick(img)).then(function (q) {
+        if (!q || !q.width) return;
+        var scale = Math.min(1, 300 / Math.max(q.width, q.height));
+        c.width = Math.max(1, Math.round(q.width * scale));
+        c.height = Math.max(1, Math.round(q.height * scale));
+        c.getContext('2d').drawImage(q, 0, 0, c.width, c.height);
+        pair.classList.remove('hidden');
+      });
+    } catch (e) {}
   }
 
   function toPngFile(file) {
@@ -108,6 +126,7 @@
         image.src = url;
       });
 
+      showQuickPreview(img);
       var cutout = await window.BackgroundEngine.remove(file, setProgress, { sourceImage: img });
       state.file = file;
       state.cutout = cutout;
