@@ -38,6 +38,15 @@ The Filofa Technology brand kit (logo, colours, typography, social assets and
 guidelines) lives in `C:\Users\Rahat\Desktop\Filofa Branding`.
 This site uses the Filofa gradient and mark throughout.
 
+## Home page
+
+`index.html` mirrors the remove.bg homepage layout: hero with cut-out subject
+and upload card, Stunning quality showcase, All-in-one remover & generator,
+One tool / endless uses grid, efficiency section, testimonials, "Just picture
+it" gallery, second upload area, blog, newsletter, rating and dark footer.
+Upload, drag-drop, paste, URL, sample images, AI removal, Magic Brush editing
+and download are all functional.
+
 ## Tools (tools.html)
 
 All nine tools run locally in the browser and were verified end-to-end:

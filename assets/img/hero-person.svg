@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 430" width="400" height="430">
+  <defs>
+    <linearGradient id="shirt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#8FA8CE"/><stop offset="1" stop-color="#6B87B3"/></linearGradient>
+    <linearGradient id="skin" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F0BE98"/><stop offset="1" stop-color="#DBA07A"/></linearGradient>
+    <linearGradient id="pot" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFFFFF"/><stop offset="1" stop-color="#CBD5E1"/></linearGradient>
+  </defs>
+  <!-- body -->
+  <path d="M96 430 C100 330 145 292 200 292 C255 292 300 330 304 430 Z" fill="url(#shirt)"/>
+  <path d="M170 288 L200 326 L230 288 L218 274 L182 274 Z" fill="#fff" opacity=".85"/>
+  <!-- neck -->
+  <path d="M183 252 H217 V292 C217 304 183 304 183 292 Z" fill="url(#skin)"/>
+  <!-- head -->
+  <ellipse cx="200" cy="196" rx="58" ry="70" fill="url(#skin)"/>
+  <!-- curly hair -->
+  <path d="M144 194 C136 138 162 108 200 108 C240 108 266 140 257 194 C252 164 242 148 228 142 C210 164 178 170 154 154 C148 166 145 180 144 194 Z" fill="#332216"/>
+  <circle cx="152" cy="144" r="14" fill="#332216"/><circle cx="174" cy="126" r="15" fill="#332216"/>
+  <circle cx="200" cy="121" r="15" fill="#332216"/><circle cx="226" cy="128" r="14" fill="#332216"/>
+  <circle cx="248" cy="146" r="13" fill="#332216"/>
+  <!-- face -->
+  <path d="M174 192 q10 -7 20 0" stroke="#332216" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <path d="M208 192 q10 -7 20 0" stroke="#332216" stroke-width="4" fill="none" stroke-linecap="round"/>
+  <ellipse cx="184" cy="202" rx="3.4" ry="4" fill="#22160F"/><ellipse cx="216" cy="202" rx="3.4" ry="4" fill="#22160F"/>
+  <path d="M200 210 q-4 12 2 15" stroke="#B87C5E" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+  <path d="M188 234 q12 10 24 0" stroke="#9B4A4A" stroke-width="3.5" fill="none" stroke-linecap="round"/>
+  <ellipse cx="164" cy="218" rx="9" ry="6" fill="#EE9A94" opacity=".4"/><ellipse cx="236" cy="218" rx="9" ry="6" fill="#EE9A94" opacity=".4"/>
+  <!-- arm holding pot -->
+  <path d="M116 340 C100 316 108 288 132 282 L164 292 C146 306 142 326 150 344 Z" fill="url(#skin)"/>
+  <path d="M258 342 C276 316 268 288 246 282 L214 294 C232 308 236 328 228 346 Z" fill="url(#skin)"/>
+  <!-- pot -->
+  <path d="M160 300 H240 L230 372 H170 Z" fill="url(#pot)"/>
+  <rect x="156" y="294" width="88" height="12" rx="4" fill="#E2E8F0"/>
+  <!-- plant -->
+  <g transform="translate(-55,42)">
+  <path d="M200 296 C196 250 190 220 184 190" stroke="#2F7D32" stroke-width="5" fill="none" stroke-linecap="round"/>
+  <path d="M184 190 C160 180 150 158 158 142 C180 146 192 164 184 190 Z" fill="#3E9C43"/>
+  <path d="M192 224 C216 214 228 194 220 178 C198 184 188 202 192 224 Z" fill="#4CAF50"/>
+  <path d="M186 202 C164 196 152 178 158 162 C178 166 190 182 186 202 Z" fill="#2F8F3A"/>
+  <path d="M196 248 C220 242 234 226 230 210 C206 214 194 230 196 248 Z" fill="#43A047"/>
+  <path d="M190 168 C176 150 180 130 196 122 C208 138 206 156 190 168 Z" fill="#57B85C"/>
+  </g>
+</svg>

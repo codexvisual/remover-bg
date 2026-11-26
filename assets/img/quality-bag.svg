@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 500" width="900" height="500">
+  <defs>
+    <linearGradient id="bag" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD23F"/><stop offset="0.55" stop-color="#F9B900"/><stop offset="1" stop-color="#E89A00"/></linearGradient>
+    <pattern id="checks" width="32" height="32" patternUnits="userSpaceOnUse"><rect width="32" height="32" fill="#fff"/><rect width="16" height="16" fill="#E6EAF0"/><rect x="16" y="16" width="16" height="16" fill="#E6EAF0"/></pattern>
+  </defs>
+  <rect width="900" height="500" fill="#C7A3B8"/>
+  <rect x="450" width="450" height="500" fill="url(#checks)"/>
+  <g transform="translate(450,268)">
+    <path d="M-150 -10 C-150 -90 -100 -130 -40 -130 C-10 -130 10 -118 24 -98 C38 -118 58 -130 88 -130 C148 -130 198 -90 198 -10 L210 120 C212 145 196 160 172 160 H-172 C-196 160 -212 145 -210 120 Z" fill="url(#bag)"/>
+    <path d="M-118 -12 C-118 -76 -80 -104 -40 -104 C-14 -104 4 -90 18 -66 C34 -92 54 -104 84 -104 C124 -104 162 -76 162 -12" fill="none" stroke="#D99A00" stroke-width="12" stroke-linecap="round"/>
+    <rect x="-26" y="40" width="52" height="52" rx="12" fill="#E89A00"/>
+    <circle cx="0" cy="66" r="13" fill="#FFF0B8"/>
+    <path d="M-190 96 H190" stroke="#D99A00" stroke-width="3" opacity=".5"/>
+    <path d="M-150 -10 C-150 -90 -100 -130 -40 -130" fill="none" stroke="#FFE07A" stroke-width="4" opacity=".7"/>
+  </g>
+</svg>

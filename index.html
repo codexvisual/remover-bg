@@ -1,148 +1,236 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Remove Image Background — 100% Automatic & Free</title>
-<meta name="description" content="Remove image backgrounds automatically in seconds with AI. Free, fast and no skills required. Try the online background remover now.">
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Remove Image Background — 100% Automatically and Free | Remover bg</title>
+<meta name="description" content="Remove image backgrounds automatically in seconds with AI. Free, fast and no skills required. A product by Filofa Technology.">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="assets/css/style.css">
-<style>
-  .hero h1 .free-line u { text-decoration-color: var(--blue); }
-  .hero-upload-card{background:#fff;border-radius:var(--radius-lg);padding:10px;box-shadow:var(--shadow-lg);border:1px solid #e8eef9}
-  .hero-upload-card .dropzone{border-width:2px;box-shadow:none;background:#fff;padding:34px 24px}
-  .result-section{padding:60px 0 90px;background:radial-gradient(700px 300px at 50% 0%,#e9f1ff,transparent 70%),#fbfdff;min-height:70vh}
-</style>
+<link rel="stylesheet" href="assets/css/home.css">
+<link rel="stylesheet" href="assets/css/upload.css">
 </head>
-<body>
+<body class="hm-site">
 
-<div class="announce">
-  🎉 New: generate custom AI backgrounds in one click — no prompt needed. <a href="features.html#generator">See how it works</a>
-  <button class="announce-close" aria-label="Dismiss">×</button>
-</div>
-
-<header class="site-header">
+<header class="site-header" style="position:static">
   <div class="container header-inner">
-    <a href="index.html" class="logo" aria-label="Remover bg home">
-      <span class="logo-mark"><svg><use href="#i-logo"/></svg></span>
-      <span>remove<b>.bg</b></span>
-    </a>
-    <nav class="main-nav" aria-label="Main navigation">
-      <a href="features.html">Features</a>
-      <a href="use-cases.html">Use cases</a>
-      <a href="tools.html">Tools</a>
-      <a href="pricing.html">Pricing</a>
+    <a href="index.html" class="logo" aria-label="Remover bg home"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a>
+    <nav class="main-nav">
+      <a href="upload.html" class="active">Uploads</a>
+      <a href="tools.html">Bulk Editing</a>
       <a href="api.html">API</a>
-      <a href="blog.html">Blog</a>
+      <a href="tools.html">Plugins</a>
+      <a href="pricing.html">Pricing</a>
     </nav>
     <div class="header-actions">
       <a href="contact.html" class="login">Log in</a>
-      <a href="pricing.html" class="btn btn-primary btn-sm">Sign up free</a>
-      <button class="menu-toggle" aria-label="Open menu" aria-expanded="false"><span></span><span></span><span></span></button>
+      <a href="pricing.html" class="btn btn-outline btn-sm" style="border-radius:999px;background:#f3f4f6;border-color:#e5e7eb">Sign up</a>
+      <button class="menu-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
     </div>
   </div>
 </header>
 
+<div class="up-notice">
+  Remover bg is built by <a href="about.html">Filofa Technology</a>. Looking for automation? Explore our <a href="api.html">API</a> and <a href="tools.html">bulk tools</a>.
+</div>
+
 <!-- ================= HERO ================= -->
-<section class="hero" id="heroSection">
-  <div class="container hero-grid">
-    <div>
-      <h1>Remove Image <span>Background</span>
-        <span class="free-line">100% Automatically and <u>Free</u></span>
-      </h1>
-      <p class="hero-sub">Upload a picture and let AI cut out the subject for you. Perfect for product photos, profile pictures and designs — no editing skills needed.</p>
-
-      <div class="uploader-wrap" id="uploadView">
-        <div class="upload-tabs">
-          <button class="upload-tab active" id="tabFile" type="button"><svg class="inline-icon"><use href="#i-upload"/></svg> Upload image</button>
-          <button class="upload-tab" id="tabUrl" type="button"><svg class="inline-icon"><use href="#i-link"/></svg> Paste image URL</button>
-        </div>
-
-        <div class="hero-upload-card">
-          <div id="filePanel">
-            <div class="dropzone" id="dropzone" role="button" tabindex="0" aria-label="Upload an image">
-              <div class="drop-icon"><svg><use href="#i-upload"/></svg></div>
-              <h3>Drop your image here</h3>
-              <p>or click to browse files — JPG, PNG, WebP, BMP up to 15 MB</p>
-              <button class="btn btn-primary btn-lg" type="button" onclick="document.getElementById('fileInput').click()">Upload Image</button>
-              <div class="drop-or">or paste from clipboard</div>
-              <div class="drop-or" style="margin-top:12px">drag & drop anywhere above</div>
-            </div>
-          </div>
-          <div id="urlPanel" class="hidden">
-            <div class="dropzone" style="padding:34px 24px">
-              <div class="drop-icon"><svg><use href="#i-link"/></svg></div>
-              <h3>Paste an image link</h3>
-              <p>Use a direct link to a JPG or PNG image</p>
-              <div class="url-row">
-                <input id="urlInput" type="url" placeholder="https://example.com/photo.jpg" aria-label="Image URL">
-                <button class="btn btn-primary" id="urlGo" type="button">Remove</button>
-              </div>
-            </div>
-          </div>
-          <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp" class="hidden">
-          <p id="errorMessage" class="hidden" style="color:#dc2626;font-size:.86rem;padding:10px 14px 0"></p>
-        </div>
-
-        <div class="hero-note">
-          <svg><use href="#i-check"/></svg>
-          <span>No sign-up required for your first images · Files are processed securely</span>
-        </div>
-        <p style="font-size:.78rem;color:var(--muted);margin:10px 0 0">A product by <strong style="color:var(--blue)">Filofa Technology</strong></p>
-      </div>
+<section class="hm-hero" id="heroSection">
+  <div class="container hm-hero-grid">
+    <div class="hm-hero-left">
+      <img class="hm-hero-person" src="assets/img/hero-person.svg" alt="Person cut out from the background">
+      <h1>Remove Image<br>Background</h1>
+      <p class="hm-hero-sub">100% Automatically and <span class="hm-free-pill">Free</span></p>
     </div>
 
-    <div class="hero-visual">
-      <div class="showcase">
-        <div class="showcase-media">
-          <img src="assets/img/before.svg" alt="Original photo with background">
-          <div class="showcase-after" id="compareAfter"><img src="assets/img/after.svg" alt="Photo with background removed"></div>
-          <div class="showcase-labels"><span>Before</span><span>After</span></div>
-          <div class="slider-handle" id="compareHandle">↔</div>
-          <input class="slider-range" id="compareRange" type="range" min="0" max="100" value="50" aria-label="Compare before and after">
+    <div id="uploadView">
+      <div class="hm-upload-card" id="dropzone" role="button" tabindex="0" aria-label="Upload an image">
+        <div id="filePanel">
+          <button class="hm-upload-btn" id="uploadBtn" type="button">Upload Image</button>
+          <p class="hm-drop-label">or drop a file,</p>
+          <p class="hm-url-line">paste image or <a id="urlToggle" role="button" tabindex="0">URL</a></p>
+          <div class="hm-url-row hidden" id="urlRow">
+            <input type="url" id="urlInput" placeholder="https://example.com/photo.jpg" aria-label="Image URL">
+            <button class="hm-upload-btn" id="urlGo" type="button" style="font-size:13px;padding:10px 18px">Remove</button>
+          </div>
         </div>
-        <div class="showcase-footer"><span class="dot"></span> Drag the slider to see the AI cut-out in action — transparent background included.</div>
+        <p class="hm-error" id="errorMessage" role="alert"></p>
       </div>
-      <div class="float-badge">
-        <svg><use href="#i-bolt"/></svg>
-        <div>Ready in seconds<small>Average processing: 3s</small></div>
+      <input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp" class="hidden">
+
+      <div class="hm-under-card">
+        <b>No image? Try one of these:</b>
+        <div class="hm-thumbs">
+          <button class="hm-thumb" type="button" data-sample="assets/img/sample-1.svg" aria-label="Try portrait"><img src="assets/img/sample-1.svg" alt="Portrait"></button>
+          <button class="hm-thumb" type="button" data-sample="assets/img/sample-2.svg" aria-label="Try plant"><img src="assets/img/sample-2.svg" alt="Plant"></button>
+          <button class="hm-thumb" type="button" data-sample="assets/img/sample-3.svg" aria-label="Try car"><img src="assets/img/sample-3.svg" alt="Car"></button>
+          <button class="hm-thumb" type="button" data-sample="assets/img/sample-4.svg" aria-label="Try interior"><img src="assets/img/sample-4.svg" alt="Interior"></button>
+        </div>
+        <p class="hm-fine">By uploading an image or URL you agree to our <a href="terms.html">Terms of Service</a>. To learn more about how Remover bg handles your personal data, check our <a href="privacy.html">Privacy Policy</a>.</p>
       </div>
     </div>
   </div>
 </section>
 
-<!-- ================= WORKSPACE / RESULT ================= -->
+<!-- ================= STUNNING QUALITY ================= -->
+<section class="hm-section center">
+  <div class="container">
+    <h2>Stunning quality</h2>
+    <div class="hm-tabs" role="tablist" aria-label="Example categories">
+      <button class="hm-tab active" type="button">Products</button>
+      <button class="hm-tab" type="button">Animals</button>
+      <button class="hm-tab" type="button">Cars</button>
+      <button class="hm-tab" type="button">Eyewear</button>
+      <button class="hm-tab" type="button">Logos</button>
+    </div>
+    <div class="hm-demo"><img src="assets/img/quality-bag.svg" alt="Product photo before and after background removal"></div>
+    <a class="hm-demo-link" href="tools.html">See more examples →</a>
+  </div>
+</section>
+
+<!-- ================= ALL IN ONE ================= -->
+<section class="hm-section" style="background:#F7F9FC">
+  <div class="container hm-two">
+    <div>
+      <h2>All-in-one AI background remover &amp; generator</h2>
+      <p class="lead">Remove.bg is your go-to, high-quality background remover, making it easy to cut out a picture and isolate the background with incredible accuracy. But it doesn't stop there. With the AI background generator, you can instantly create custom backdrops — no need to write a prompt.</p>
+      <div class="hm-two-links"><a href="features.html#generator">Explore the generator →</a><a href="features.html">See all features →</a></div>
+    </div>
+    <div class="hm-two-art">
+      <img src="assets/img/before.svg" alt="Original image" style="width:48%;border-radius:10px">
+      <img src="assets/img/after.svg" alt="Cut-out with transparent background" style="width:48%;border-radius:10px">
+    </div>
+  </div>
+</section>
+
+<!-- ================= ENDLESS USES ================= -->
+<section class="hm-section center">
+  <div class="container">
+    <h2>One tool, endless uses</h2>
+    <p class="lead">Edit your photos' backgrounds to white for flawless e-commerce shots, car listings, or professional headshots. Create a transparent background (PNG) to design the perfect logo or graphic for any project or presentation.</p>
+    <div class="hm-usecases">
+      <a class="hm-usecase" href="features.html"><svg><use href="#i-brush"/></svg> Magic Brush →</a>
+      <a class="hm-usecase" href="use-cases.html"><svg><use href="#i-users"/></svg> For Individuals →</a>
+      <a class="hm-usecase" href="use-cases.html#photographers"><svg><use href="#i-camera"/></svg> For Photographers →</a>
+      <a class="hm-usecase" href="use-cases.html#marketing"><svg><use href="#i-spark"/></svg> For Marketing →</a>
+      <a class="hm-usecase" href="api.html"><svg><use href="#i-api"/></svg> For Developers →</a>
+      <a class="hm-usecase" href="use-cases.html#ecommerce"><svg><use href="#i-bag"/></svg> For Ecommerce →</a>
+      <a class="hm-usecase" href="use-cases.html#media"><svg><use href="#i-image"/></svg> For Media →</a>
+      <a class="hm-usecase" href="use-cases.html#media"><svg><use href="#i-layers"/></svg> For Car Dealerships →</a>
+      <a class="hm-usecase" href="use-cases.html"><svg><use href="#i-shield"/></svg> For Enterprise →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ================= EFFICIENCY ================= -->
+<section class="hm-section">
+  <div class="container hm-two">
+    <div class="hm-two-art"><svg style="width:140px;height:140px;color:#2563FF"><use href="#i-bolt"/></svg><p class="muted" style="font-size:13px;text-align:center;margin:16px 0 0">Process up to 500 images per minute with the API and bulk tools.</p></div>
+    <div>
+      <h2>Boost your efficiency with automated background removal</h2>
+      <p class="lead">With Remover bg, deleting backgrounds and extracting the subject from an image is fast and effortless. Bulk editing lets you process hundreds of images per minute, while integrations with tools like Figma, Photoshop, and Zapier embed background removal directly into your workflow.</p>
+      <div class="hm-two-links"><a href="tools.html">Remover bg's integrations →</a><a href="api.html">Remover bg's API docs →</a></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= TESTIMONIALS ================= -->
+<section class="hm-section" style="background:#F7F9FC">
+  <div class="container">
+    <h2 class="text-center">They love us. You will too.</h2>
+    <div class="hm-quotes">
+      <div class="hm-quote"><p>"I am impressed by how AI and magic brush work together to get the perfect cut-out in seconds."</p><small>Lisa M.</small><span>For Ecommerce Websites</span></div>
+      <div class="hm-quote"><p>"Using this for lots of team and forum photos now. It's fast and does a great job even with fine hair."</p><small>Marc C.</small><span>For Online Communities</span></div>
+      <div class="hm-quote"><p>"We initially thought building this into our app would take months. Turned out to be a single afternoon."</p><small>Lyle Crimson</small><span>For Developers</span></div>
+    </div>
+    <div class="text-center" style="margin-top:22px"><a class="hm-demo-link" href="about.html">Read more Success Stories →</a></div>
+  </div>
+</section>
+
+<!-- ================= JUST PICTURE IT ================= -->
+<section class="hm-section center">
+  <div class="container">
+    <h2>Just picture it</h2>
+    <p class="lead">From the original to a clean cut-out and a brand-new scene — all in one workflow.</p>
+    <div class="hm-pictures">
+      <div class="hm-picture"><div class="art"><img src="assets/img/before.svg" alt="Original"></div><span>Original</span></div>
+      <div class="hm-picture"><div class="art" style="background:linear-gradient(45deg,#e6eaf0 25%,#fff 25%,#fff 50%,#e6eaf0 50%,#e6eaf0 75%,#fff 75%)"><img class="cut" src="assets/img/after.svg" alt="Transparent"></div><span>Transparent background</span></div>
+      <div class="hm-picture"><div class="art" style="background:#fff"><img class="cut" src="assets/img/after.svg" alt="White background"></div><span>White background</span></div>
+      <div class="hm-picture"><div class="art" style="background:linear-gradient(135deg,#dbe9ff,#f3e8ff)"><img class="cut" src="assets/img/after.svg" alt="New background"></div><span>New background</span></div>
+      <div class="hm-picture"><div class="art" style="background:#eef2f8"><img class="cut" src="assets/img/after.svg" alt="Background removed"></div><span>Background removed</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SECOND UPLOAD ================= -->
+<section class="hm-second">
+  <div class="container">
+    <h2>Remove Image Background</h2>
+    <div class="hm-second-card">
+      <button class="hm-upload-btn" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('fileInput').click()">Upload Image</button>
+      <p class="hm-drop-label">or drop a file,</p>
+      <p class="hm-url-line">paste image or <a href="upload.html">URL</a></p>
+    </div>
+    <div class="hm-under-card"><b>No image? Try one of these:</b>
+      <div class="hm-thumbs">
+        <button class="hm-thumb" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('fileInput').click()" aria-label="Use sample"><img src="assets/img/sample-1.svg" alt="Sample"></button>
+        <button class="hm-thumb" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('fileInput').click()" aria-label="Use sample"><img src="assets/img/sample-2.svg" alt="Sample"></button>
+        <button class="hm-thumb" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('fileInput').click()" aria-label="Use sample"><img src="assets/img/sample-3.svg" alt="Sample"></button>
+        <button class="hm-thumb" type="button" onclick="window.scrollTo({top:0,behavior:'smooth'});document.getElementById('fileInput').click()" aria-label="Use sample"><img src="assets/img/sample-4.svg" alt="Sample"></button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BLOG ================= -->
+<section class="hm-section" style="background:#F7F9FC">
+  <div class="container">
+    <h2>Blog</h2>
+    <div class="grid grid-3" style="margin-top:26px">
+      <a class="post" href="blog.html"><div class="post-art"><svg><use href="#i-spark"/></svg></div><div class="post-body"><div class="post-date">Nov 25, 2025</div><h3>Strava overlay: how to use it for Instagram stories</h3></div></a>
+      <a class="post" href="blog.html"><div class="post-art"><svg><use href="#i-star"/></svg></div><div class="post-body"><div class="post-date">Nov 17, 2025</div><h3>Black Friday offer: 50% off selected yearly plans</h3></div></a>
+      <a class="post" href="blog.html"><div class="post-art"><svg><use href="#i-image"/></svg></div><div class="post-body"><div class="post-date">Oct 20, 2025</div><h3>Remove the background in GIMP — step by step</h3></div></a>
+    </div>
+    <div class="text-center"><a class="hm-demo-link" href="blog.html">See more articles →</a></div>
+  </div>
+</section>
+
+<!-- ================= NEWSLETTER ================= -->
+<section class="hm-section" style="padding:56px 0;background:#fff">
+  <div class="container hm-two" style="gap:40px;max-width:900px">
+    <div><h2 style="font-size:26px">Get Updates</h2><p class="lead" style="font-size:14px">Sign up for our mailing list to receive news and updates about Remover bg products and services. You can unsubscribe at any time.</p></div>
+    <form data-demo-form style="display:flex;gap:8px;flex-wrap:wrap"><input type="email" required placeholder="Your email address" aria-label="Email address" style="flex:1;min-width:180px;padding:11px 14px;border:1px solid #d9dee7;border-radius:8px"><button class="hm-upload-btn" type="submit" style="font-size:14px;padding:11px 22px">Subscribe</button></form>
+  </div>
+</section>
+
+<div class="hm-rating"><div class="stars">★★★★★</div><p>Trusted by creators and teams — built by <strong>Filofa Technology</strong></p></div>
+
+<!-- ================= FOOTER ================= -->
+<footer class="hm-footer">
+  <div class="container">
+    <div class="hm-footer-grid">
+      <div><h4>Learn more</h4><a href="features.html">All features</a><a href="use-cases.html#photographers">Photographers</a><a href="use-cases.html#ecommerce">Ecommerce</a><a href="use-cases.html#marketing">Marketing</a><a href="api.html">Developers</a><a href="use-cases.html">Success stories</a></div>
+      <div><h4>Tools &amp; API</h4><a href="api.html">API Documentation</a><a href="tools.html">Integrations, tools &amp; apps</a><a href="tools.html">Photoshop Extension</a><a href="tools.html">Windows / Mac / Linux</a><a href="tools.html">Design Templates</a></div>
+      <div><h4>Support</h4><a href="faq.html">Help &amp; FAQs</a><a href="contact.html">Contact us</a><a href="faq.html#refunds">Refunds</a><a href="faq.html#status">Platform Status</a><a href="faq.html">Resources</a></div>
+      <div><h4>Company</h4><a href="blog.html">Blog</a><a href="about.html">About us</a><a href="features.html#video">Video Background Removal</a><a href="contact.html">Press &amp; Partnerships</a><a href="features.html">All features</a></div>
+    </div>
+    <div style="text-align:center;margin-bottom:22px"><span class="hm-app-badge">⬇ Get the app</span><div class="hm-socials"><span>f</span><span>𝕏</span><span>in</span><span>▶</span><span>◎</span></div></div>
+    <div class="hm-footer-bottom"><span>© 2026 Remover bg — a Filofa Technology product.</span><span><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="cookies.html">Cookie Policy</a><a href="contact.html">Imprint</a></span></div>
+  </div>
+</footer>
+
+<aside class="up-cookie" id="cookieBanner"><p>By using Remover bg you agree to the use of cookies. You can find details on how we use cookies in our <a href="cookies.html" style="color:#166534;text-decoration:underline">Cookie Policy</a>.</p><button type="button" id="cookieClose">Close</button></aside>
+
+<!-- ================= RESULT ================= -->
 <section class="result-section hidden" id="resultSection">
   <div class="container-narrow">
-    <div class="text-center" style="margin-bottom:28px">
-      <span class="eyebrow">Your result</span>
-      <h2 style="margin-bottom:8px">Background removed ✨</h2>
-      <p class="muted">Fine-tune edges, change the backdrop and download when you're happy.</p>
-    </div>
-
+    <div class="text-center" style="margin-bottom:28px"><span class="eyebrow">Your result</span><h2 style="margin-bottom:8px">Background removed ✨</h2><p class="muted">Fine-tune edges, change the backdrop and download when you're happy.</p></div>
     <div class="result-panel hidden" id="resultView">
-      <div class="result-head">
-        <div><strong id="resultName">image-removed.png</strong></div>
-        <span class="pill">✓ 100% transparent</span>
-      </div>
-
-      <div class="progress hidden" id="progress">
-        <div class="spinner"></div>
-        <div class="progress-text" id="progressText" style="font-weight:700;font-size:.9rem">Processing…</div>
-        <div class="progress-track"><i id="progressBar"></i></div>
-      </div>
-
+      <div class="result-head"><div><strong id="resultName">image-removed.png</strong></div><span class="pill">✓ 100% transparent</span></div>
+      <div class="progress hidden" id="progress"><div class="spinner"></div><div class="progress-text" id="progressText" style="font-weight:700;font-size:.9rem">Processing…</div><div class="progress-track"><i id="progressBar"></i></div></div>
       <div class="compare">
-        <figure>
-          <figcaption>Original</figcaption>
-          <div class="canvas-frame" style="background:#eef2f8"><img id="originalPreview" alt="Original uploaded image"></div>
-        </figure>
-        <figure>
-          <figcaption>Background removed</figcaption>
-          <div class="canvas-frame" id="resultFrame"><canvas id="resultCanvas"></canvas></div>
-        </figure>
+        <figure><figcaption>Original</figcaption><div class="canvas-frame" style="background:#eef2f8"><img id="originalPreview" alt="Original uploaded image"></div></figure>
+        <figure><figcaption>Background removed</figcaption><div class="canvas-frame" id="resultFrame"><canvas id="resultCanvas"></canvas></div></figure>
       </div>
-
       <div class="result-tools">
         <p class="tool-label">Background</p>
         <div class="bg-swatches">
@@ -150,10 +238,8 @@
           <button class="swatch" data-bg="white" style="background:#fff" title="White" aria-label="White"></button>
           <button class="swatch" data-bg="black" style="background:#111827" title="Black" aria-label="Black"></button>
           <button class="swatch" data-bg="custom" style="background:linear-gradient(135deg,#ff5f6d,#ffc371)" title="Custom colour" aria-label="Custom colour"></button>
-          <input type="color" id="customColor" value="#ff5f6d" style="width:38px;height:34px;border:0;background:none;padding:0" aria-label="Choose background colour">
-          <span class="muted" style="font-size:.8rem;margin-left:6px">The checkerboard means transparency</span>
+          <input type="color" id="customColor" value="#2563FF" style="width:38px;height:34px;border:0;background:none;padding:0" aria-label="Choose background colour">
         </div>
-
         <div class="brush-bar" id="brushBar">
           <label><svg class="inline-icon"><use href="#i-brush"/></svg> Magic Brush:</label>
           <button class="btn btn-sm btn-outline active" id="brushRestore" type="button">Restore</button>
@@ -163,15 +249,10 @@
           <span id="brushValue" style="font-size:.8rem;color:var(--muted)">24 px</span>
           <button class="btn btn-sm btn-ghost" id="resetBrush" type="button"><svg class="inline-icon"><use href="#i-refresh"/></svg> Reset</button>
         </div>
-        <p class="form-note" style="margin-top:10px">Paint over an area to bring back detail from the original (Restore) or remove leftovers (Erase).</p>
       </div>
-
       <div class="result-actions">
         <button class="btn btn-primary btn-lg" id="downloadBtn" type="button"><svg class="inline-icon"><use href="#i-download"/></svg> Download image</button>
-        <select id="downloadFormat" aria-label="Download format" style="padding:12px;border:1px solid var(--line);border-radius:10px;font-weight:700">
-          <option value="png">PNG (transparent)</option>
-          <option value="jpg">JPG (flat background)</option>
-        </select>
+        <select id="downloadFormat" aria-label="Download format" style="padding:12px;border:1px solid var(--line);border-radius:10px;font-weight:700"><option value="png">PNG (transparent)</option><option value="jpg">JPG (flat background)</option></select>
         <button class="btn btn-outline btn-lg" id="newImageBtn" type="button"><svg class="inline-icon"><use href="#i-refresh"/></svg> New image</button>
         <button class="hidden" id="retryBtn" type="button"></button>
       </div>
@@ -179,247 +260,39 @@
   </div>
 </section>
 
-<!-- ================= AI GENERATOR ================= -->
-<section class="section" id="generator">
-  <div class="container">
-    <div class="usecase">
-      <div class="reveal">
-        <span class="eyebrow">AI background generator</span>
-        <h2>One tool, endless background possibilities</h2>
-        <p class="lead">Remove the old background, then create a brand-new one instantly. Studio white, soft gradient, tropical beach or a subtle blur — describe the vibe, no prompt-writing skills required.</p>
-        <ul class="check-list">
-          <li><svg><use href="#i-check"/></svg><span>Generate a clean studio backdrop in a single click</span></li>
-          <li><svg><use href="#i-check"/></svg><span>Keep your subject sharp while the scene is rebuilt around it</span></li>
-          <li><svg><use href="#i-check"/></svg><span>Export print-ready PNG or compressed JPG</span></li>
-        </ul>
-        <a href="features.html#generator" class="btn btn-outline" style="margin-top:10px">Explore the generator <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-      </div>
-      <div class="usecase-art reveal" style="background:linear-gradient(135deg,#dbe9ff,#f3e8ff)">
-        <div style="width:100%;max-width:420px;border-radius:16px;overflow:hidden;box-shadow:var(--shadow);background:#fff">
-          <img src="assets/img/after.svg" alt="Cut-out person on transparent background" style="width:100%">
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= ENDLESS USES ================= -->
-<section class="section section-soft">
-  <div class="container">
-    <div class="text-center reveal">
-      <span class="eyebrow">Made for everyone</span>
-      <h2>One tool, endless uses</h2>
-      <p class="lead" style="max-width:740px;margin:0 auto 36px">Turn photos into white-background e-commerce shots, transparent PNGs for logos, polished headshots and much more.</p>
-    </div>
-
-    <div class="tabs reveal" role="tablist" aria-label="Use cases">
-      <button class="tab active" role="tab" aria-selected="true">Photographers</button>
-      <button class="tab" role="tab">E-commerce</button>
-      <button class="tab" role="tab">Marketing</button>
-      <button class="tab" role="tab">Developers</button>
-      <button class="tab" role="tab">Individuals</button>
-    </div>
-
-    <div class="tab-panel active" role="tabpanel">
-      <div class="usecase">
-        <div>
-          <h3>Portraits that look studio-perfect</h3>
-          <p class="lead">Replace a messy shoot location with a clean, consistent backdrop. Batch process hundreds of portraits and keep every edge natural — even hair and glasses.</p>
-          <ul class="check-list">
-            <li><svg><use href="#i-check"/></svg><span>Hair-aware edge detection</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Bulk editing for entire galleries</span></li>
-            <li><svg><use href="#i-check"/></svg><span>White, grey or custom colour backdrops</span></li>
-          </ul>
-          <a href="use-cases.html#photographers" class="card-link">Learn more <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-        </div>
-        <div class="usecase-art"><img src="assets/img/after.svg" alt="Portrait cut-out" style="max-height:300px"></div>
-      </div>
-    </div>
-    <div class="tab-panel" role="tabpanel">
-      <div class="usecase">
-        <div>
-          <h3>Product photos that sell</h3>
-          <p class="lead">Give every listing the same crisp white or transparent background. Drop in a new scene for seasonal campaigns without re-shooting a single product.</p>
-          <ul class="check-list">
-            <li><svg><use href="#i-check"/></svg><span>Marketplace-ready white backgrounds</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Consistent sizing with the built-in resizer</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Process up to 500 images per minute</span></li>
-          </ul>
-          <a href="use-cases.html#ecommerce" class="card-link">Learn more <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-        </div>
-        <div class="usecase-art"><img src="assets/img/before.svg" alt="Product photo example" style="max-height:300px"></div>
-      </div>
-    </div>
-    <div class="tab-panel" role="tabpanel">
-      <div class="usecase">
-        <div>
-          <h3>Campaign visuals in minutes</h3>
-          <p class="lead">Isolate people and products from stock photos, then drop them into any layout. Keep your brand consistent across every channel.</p>
-          <ul class="check-list">
-            <li><svg><use href="#i-check"/></svg><span>Figma and Photoshop integrations</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Ready-made design templates</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Team-friendly bulk workflows</span></li>
-          </ul>
-          <a href="use-cases.html#marketing" class="card-link">Learn more <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-        </div>
-        <div class="usecase-art"><img src="assets/img/after.svg" alt="Marketing cut-out example" style="max-height:300px"></div>
-      </div>
-    </div>
-    <div class="tab-panel" role="tabpanel">
-      <div class="usecase">
-        <div>
-          <h3>Background removal, built into your app</h3>
-          <p class="lead">One API call turns any image into a transparent PNG. Clean JSON errors, predictable pricing and SDKs for the languages you already use.</p>
-          <ul class="check-list">
-            <li><svg><use href="#i-check"/></svg><span>Simple REST API with API key auth</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Synchronous and async processing</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Webhooks for bulk jobs</span></li>
-          </ul>
-          <a href="api.html" class="card-link">Read the docs <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-        </div>
-        <div class="usecase-art"><svg style="width:120px;height:120px;color:var(--blue)"><use href="#i-api"/></svg></div>
-      </div>
-    </div>
-    <div class="tab-panel" role="tabpanel">
-      <div class="usecase">
-        <div>
-          <h3>Photos you'll actually want to keep</h3>
-          <p class="lead">Fix a passport photo, make a fun sticker or put your pet on a new background. It's free, private and takes seconds.</p>
-          <ul class="check-list">
-            <li><svg><use href="#i-check"/></svg><span>No account for your first images</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Paste straight from clipboard</span></li>
-            <li><svg><use href="#i-check"/></svg><span>Download as PNG or JPG</span></li>
-          </ul>
-          <a href="tools.html" class="card-link">See all tools <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-        </div>
-        <div class="usecase-art"><img src="assets/img/before.svg" alt="Personal photo example" style="max-height:300px"></div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= FEATURES ================= -->
-<section class="section">
-  <div class="container">
-    <div class="text-center reveal">
-      <span class="eyebrow">Why Remover bg</span>
-      <h2>Professional results, zero effort</h2>
-      <p class="lead" style="max-width:640px;margin:0 auto">Everything you need to get a clean cut-out and put it to work — right in your browser.</p>
-    </div>
-    <div class="grid grid-3" style="margin-top:44px">
-      <div class="card reveal"><div class="card-icon"><svg><use href="#i-spark"/></svg></div><h3>AI precision</h3><p>Trained on millions of images to find even the finest details like hair, fur and transparent glass.</p></div>
-      <div class="card reveal"><div class="card-icon"><svg><use href="#i-bolt"/></svg></div><h3>Seconds, not hours</h3><p>Upload, wait a moment, download. No masking, no pen tool, no learning curve.</p></div>
-      <div class="card reveal"><div class="card-icon"><svg><use href="#i-palette"/></svg></div><h3>Any background</h3><p>Keep transparency, switch to white, pick a colour or generate a completely new scene.</p></div>
-      <div class="card reveal"><div class="card-icon"><svg><use href="#i-brush"/></svg></div><h3>Magic Brush</h3><p>Restore lost detail or erase leftovers with a simple brush directly in the result view.</p></div>
-      <div class="card reveal"><div class="card-icon"><svg><use href="#i-shield"/></svg></div><h3>Private by design</h3><p>Your images are only used to produce your result. Nothing is shared or published.</p></div>
-      <div class="card reveal"><div class="card-icon"><svg><use href="#i-api"/></svg></div><h3>Works everywhere</h3><p>Use the website, the API, or integrations for Figma, Photoshop and Zapier.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= HOW IT WORKS ================= -->
-<section class="section section-blue">
-  <div class="container">
-    <div class="text-center reveal"><span class="eyebrow">How it works</span><h2>From photo to PNG in three steps</h2></div>
-    <div class="grid grid-3" style="margin-top:40px">
-      <div class="card reveal text-center"><div class="card-icon" style="margin-inline:auto"><svg><use href="#i-upload"/></svg></div><h3>1. Upload</h3><p>Drag and drop a photo, paste a link or paste straight from your clipboard.</p></div>
-      <div class="card reveal text-center"><div class="card-icon" style="margin-inline:auto"><svg><use href="#i-spark"/></svg></div><h3>2. AI removes it</h3><p>Our model detects the subject and separates it from the background automatically.</p></div>
-      <div class="card reveal text-center"><div class="card-icon" style="margin-inline:auto"><svg><use href="#i-download"/></svg></div><h3>3. Download</h3><p>Save a transparent PNG, add a new background, then download and use it anywhere.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ================= STATS ================= -->
-<section class="section-sm">
-  <div class="container">
-    <div class="stats reveal">
-      <div class="stat"><b>500+</b><span>images per minute with bulk mode</span></div>
-      <div class="stat"><b>3 sec</b><span>average processing time</span></div>
-      <div class="stat"><b>15 MB</b><span>maximum image size</span></div>
-      <div class="stat"><b>100%</b><span>automatic — no manual masking</span></div>
-    </div>
-    <div class="divider" style="margin:44px 0 30px"></div>
-    <p class="text-center muted" style="font-size:.82rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;margin-bottom:18px">Fits into the tools you already use</p>
-    <div class="logo-strip reveal">
-      <span>Figma</span><span>Photoshop</span><span>Zapier</span><span>Shopify</span><span>WooCommerce</span><span>Canva</span><span>Google Sheets</span><span>Airtable</span>
-    </div>
-  </div>
-</section>
-
-<!-- ================= BLOG ================= -->
-<section class="section section-soft">
-  <div class="container">
-    <div style="display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:30px">
-      <div><span class="eyebrow">From the blog</span><h2 style="margin:0">Tips, guides and ideas</h2></div>
-      <a href="blog.html" class="card-link">See more articles <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-    </div>
-    <div class="grid grid-3">
-      <a class="post reveal" href="blog.html#strava"><div class="post-art"><svg><use href="#i-spark"/></svg></div><div class="post-body"><div class="post-date">Nov 25, 2025</div><h3>Strava overlay: how to use it for Instagram stories</h3></div></a>
-      <a class="post reveal" href="blog.html#gimp"><div class="post-art"><svg><use href="#i-image"/></svg></div><div class="post-body"><div class="post-date">Oct 20, 2025</div><h3>Remove the background in GIMP — step by step</h3></div></a>
-      <a class="post reveal" href="blog.html#ecommerce"><div class="post-art"><svg><use href="#i-bag"/></svg></div><div class="post-body"><div class="post-date">Oct 08, 2025</div><h3>Product photo tips that improve conversion</h3></div></a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= CTA ================= -->
-<section class="section">
-  <div class="container">
-    <div class="cta-band reveal">
-      <h2>Ready to remove a background?</h2>
-      <p>It takes one upload. No installation, no account, no design skills — just a clean cut-out in seconds.</p>
-      <a href="#heroSection" class="btn btn-primary btn-lg" onclick="if(window.RemoveBG){RemoveBG.reset()}">Try it for free <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
-    </div>
-  </div>
-</section>
-
-<!-- ================= FOOTER ================= -->
-<footer class="site-footer">
-  <div class="container">
-    <div class="footer-grid">
-      <div class="footer-brand">
-        <a href="index.html" class="logo"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a>
-        <p>Automatically remove image backgrounds with AI. A product by Filofa Technology. Loved by individuals, teams and developers around the world.</p>
-      </div>
-      <div class="footer-col"><h4>Learn more</h4><ul>
-        <li><a href="features.html">All features</a></li><li><a href="use-cases.html#photographers">Photographers</a></li>
-        <li><a href="use-cases.html#marketing">Marketing</a></li><li><a href="api.html">Developers</a></li>
-        <li><a href="use-cases.html#ecommerce">Ecommerce</a></li><li><a href="use-cases.html#media">Media</a></li>
-      </ul></div>
-      <div class="footer-col"><h4>Tools &amp; API</h4><ul>
-        <li><a href="api.html">API Documentation</a></li><li><a href="tools.html">Integrations &amp; tools</a></li>
-        <li><a href="tools.html#resizer">Image resizer</a></li><li><a href="tools.html#passport">Passport photo maker</a></li>
-        <li><a href="tools.html#converter">Format converter</a></li>
-      </ul></div>
-      <div class="footer-col"><h4>Support</h4><ul>
-        <li><a href="faq.html">Help &amp; FAQs</a></li><li><a href="contact.html">Contact us</a></li>
-        <li><a href="faq.html#refunds">Refunds</a></li><li><a href="faq.html#status">Platform status</a></li>
-      </ul></div>
-      <div class="footer-col"><h4>Company</h4><ul>
-        <li><a href="blog.html">Blog</a></li><li><a href="about.html">About us</a></li>
-        <li><a href="features.html#video">Video background removal</a></li><li><a href="contact.html">Press &amp; partnerships</a></li>
-      </ul></div>
-    </div>
-    <div class="footer-bottom">
-      <p>© 2026 Remover bg — a Filofa Technology product. Built for learning purposes.</p>
-      <div class="footer-legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="cookies.html">Cookie Policy</a></div>
-    </div>
-  </div>
-</footer>
-
-<!-- Global processing feedback -->
-<div class="processing-overlay hidden" id="processingOverlay">
-  <div class="processing-card">
-    <div class="spinner"></div>
-    <strong id="processingText" style="font-size:1.02rem">Processing your image…</strong>
-    <div class="progress-track" style="width:100%"><i id="processingBar"></i></div>
-    <span class="muted" style="font-size:.8rem">This usually takes a few seconds</span>
-  </div>
-</div>
+<div class="processing-overlay hidden" id="processingOverlay"><div class="processing-card"><div class="spinner"></div><strong id="processingText" style="font-size:1.02rem">Processing your image…</strong><div class="progress-track" style="width:100%"><i id="processingBar"></i></div><span class="muted" style="font-size:.8rem">This usually takes a few seconds</span></div></div>
 
 <script src="assets/js/config.js"></script>
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/site.js"></script>
 <script src="assets/js/background.js"></script>
 <script src="assets/js/remove.js"></script>
+<script>
+/* homepage-only wiring: samples, URL toggle, cookie banner */
+(function(){
+  var toggle=document.getElementById('urlToggle'), row=document.getElementById('urlRow');
+  function toggleUrl(){ row.classList.toggle('hidden'); if(!row.classList.contains('hidden')) document.getElementById('urlInput').focus(); }
+  toggle.addEventListener('click',toggleUrl);
+  toggle.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();toggleUrl();}});
+  document.querySelectorAll('.hm-thumb[data-sample]').forEach(function(btn){
+    btn.addEventListener('click',async function(){
+      try{
+        var res=await fetch(btn.dataset.sample); if(!res.ok) throw new Error('HTTP '+res.status);
+        var blob=await res.blob();
+        var url=URL.createObjectURL(blob);
+        var img=new Image();
+        await new Promise(function(ok,bad){img.onload=ok;img.onerror=bad;img.src=url;});
+        var c=document.createElement('canvas'); c.width=img.naturalWidth||600; c.height=img.naturalHeight||600;
+        c.getContext('2d').drawImage(img,0,0,c.width,c.height); URL.revokeObjectURL(url);
+        var png=await new Promise(function(ok){c.toBlob(ok,'image/png');});
+        if(window.RemoveBG) window.RemoveBG.process(new File([png],'sample.png',{type:'image/png'}));
+      }catch(e){ document.getElementById('errorMessage').textContent='Sample could not be loaded: '+e.message; }
+    });
+  });
+  var cookie=document.getElementById('cookieBanner');
+  if(localStorage.getItem('rb-cookie-closed')==='1') cookie.classList.add('hidden');
+  document.getElementById('cookieClose').addEventListener('click',function(){cookie.classList.add('hidden');localStorage.setItem('rb-cookie-closed','1');});
+})();
+</script>
 </body>
 </html>

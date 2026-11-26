@@ -298,6 +298,8 @@
     el.resultView.classList.remove('hidden');
     var hero = $('heroSection');
     if (hero) hero.classList.add('hidden');
+    var resultSection = $('resultSection');
+    if (resultSection) resultSection.classList.remove('hidden');
     if (el.errorMessage) el.errorMessage.classList.add('hidden');
     el.resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -308,6 +310,8 @@
     el.uploadView.classList.remove('hidden');
     var hero = $('heroSection');
     if (hero) hero.classList.remove('hidden');
+    var resultSection = $('resultSection');
+    if (resultSection) resultSection.classList.add('hidden');
     if (el.fileInput) el.fileInput.value = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
