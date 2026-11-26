@@ -111,6 +111,14 @@ body.result-open #heroSection,body.result-open .hm-section,body.result-open .hm-
 .editor-template.t6{background:linear-gradient(135deg,#c8f7dc,#7dd3fc)}
 .editor-template.t7{background:linear-gradient(135deg,#fbcfe8,#c4b5fd)}
 .editor-template.t8{background:linear-gradient(135deg,#0f172a,#334155)}
+.editor-template.t9{background:linear-gradient(135deg,#fde68a,#fca5a5)}
+.editor-template.t10{background:linear-gradient(135deg,#a7f3d0,#6ee7b7)}
+.editor-template.t11{background:linear-gradient(135deg,#c4b5fd,#818cf8)}
+.editor-template.t12{background:linear-gradient(135deg,#fbcfe8,#f9a8d4)}
+.editor-template.t13{background:linear-gradient(135deg,#fde68a,#fca5a5)}
+.editor-template.t14{background:linear-gradient(135deg,#a7f3d0,#6ee7b7)}
+.editor-template.t15{background:linear-gradient(135deg,#c4b5fd,#818cf8)}
+.editor-template.t16{background:linear-gradient(135deg,#fbcfe8,#f9a8d4)}
 
 /* shortcut hint */
 .editor-hint{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:6px;margin:14px 0 0;font-size:.72rem;color:#8a93a3}
@@ -238,8 +246,12 @@ body.result-open #heroSection,body.result-open .hm-section,body.result-open .hm-
 @media(max-width:640px){
   .result-section{padding:16px 0 40px}
   .studio-shell,.up-result.studio-shell{width:min(100% - 20px,1180px)}
-  .studio-tab{padding:8px 10px;font-size:.78rem;gap:5px}
-  .studio-tab svg{width:15px;height:15px}
+  .studio-bar{display:grid;grid-template-columns:1fr auto;gap:6px;position:sticky;top:0;z-index:40;border-radius:0 0 16px 16px}
+  .studio-tabs{grid-column:1 / -1;flex-wrap:wrap;justify-content:stretch;overflow:visible}
+  .studio-tab{flex:1 1 auto;min-width:0;padding:7px 4px;font-size:.7rem;gap:3px;justify-content:center}
+  .studio-tab svg{display:none}
+  .studio-bar-actions{grid-column:2;grid-row:1;justify-content:flex-end}
+  .studio-sep{display:none}
   .studio-icon{width:32px;height:32px}
   .studio-icon svg{width:16px;height:16px}
   .studio-download{padding:9px 14px;font-size:.82rem}

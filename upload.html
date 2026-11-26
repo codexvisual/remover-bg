@@ -149,6 +149,16 @@
             <option value="1920x1080">HD 1920 × 1080</option>
             <option value="800x800">Square 800 × 800</option>
             <option value="420x540">Passport 420 × 540</option>
+            <option value="300x80">Signature 300 x 80</option>
+            <option value="413x531">Passport 35 x 45 mm</option>
+            <option value="600x600">Square 2 x 2 in</option>
+            <option value="1200x1800">Photo 4 x 6 in</option>
+            <option value="2480x3508">A4 210 x 297 mm</option>
+            <option value="1080x1920">Instagram Story 1080 x 1920</option>
+            <option value="851x315">Facebook Cover 851 x 315</option>
+            <option value="1584x396">LinkedIn Banner 1584 x 396</option>
+            <option value="1500x500">Twitter Header 1500 x 500</option>
+            <option value="1280x720">YouTube Thumb 1280 x 720</option>
           </select>
         </label>
         <span class="editor-label">W <input class="editor-num" id="resizeW" type="number" min="1" value="800"></span>
@@ -193,6 +203,10 @@
           <button class="editor-template t2" type="button" data-template="linear-gradient(135deg,#ffe6d5,#ffd1dc)" title="Warm"></button>
           <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
           <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
+          <button class="editor-template t9" type="button" data-template="linear-gradient(135deg,#fde68a,#fca5a5)" title="Sunrise"></button>
+          <button class="editor-template t10" type="button" data-template="linear-gradient(135deg,#a7f3d0,#6ee7b7)" title="Mint"></button>
+          <button class="editor-template t11" type="button" data-template="linear-gradient(135deg,#c4b5fd,#818cf8)" title="Violet"></button>
+          <button class="editor-template t12" type="button" data-template="linear-gradient(135deg,#fbcfe8,#f9a8d4)" title="Rose"></button>
         </div>
       </div>
       <p class="design-note" style="margin-top:12px">Transparent keeps the checkerboard so you can paste the cut-out anywhere.</p>
@@ -214,6 +228,7 @@
 
     <div class="ed-pane hidden" data-pane="adjust" role="tabpanel">
       <button class="panel-btn wide" type="button" id="edAuto"><svg aria-hidden="true"><use href="#i-wand"/></svg> Auto enhance</button>
+    <button class="panel-btn wide" type="button" id="edDenoise"><svg aria-hidden="true"><use href="#i-spark"/></svg> Grain surgery</button>
       <p class="tool-label">Looks</p>
       <div class="ed-presets" role="group" aria-label="Colour presets">
         <button class="ed-preset active" type="button" data-preset="original">Original</button>
@@ -275,8 +290,12 @@
             <button class="editor-template t5" type="button" data-template="linear-gradient(135deg,#ffd6a5,#ff9a8b)" title="Sunset"></button>
             <button class="editor-template t6" type="button" data-template="linear-gradient(135deg,#c8f7dc,#7dd3fc)" title="Mint"></button>
             <button class="editor-template t7" type="button" data-template="linear-gradient(135deg,#fbcfe8,#c4b5fd)" title="Candy"></button>
-            <button class="editor-template t8" type="button" data-template="linear-gradient(135deg,#0f172a,#334155)" title="Midnight"></button>
-          </div>
+          <button class="editor-template t8" type="button" data-template="linear-gradient(135deg,#0f172a,#334155)" title="Midnight"></button>
+          <button class="editor-template t13" type="button" data-template="linear-gradient(135deg,#fde68a,#fca5a5)" title="Sunrise"></button>
+          <button class="editor-template t14" type="button" data-template="linear-gradient(135deg,#a7f3d0,#6ee7b7)" title="Mint"></button>
+          <button class="editor-template t15" type="button" data-template="linear-gradient(135deg,#c4b5fd,#818cf8)" title="Violet"></button>
+          <button class="editor-template t16" type="button" data-template="linear-gradient(135deg,#fbcfe8,#f9a8d4)" title="Rose"></button>
+        </div>
         </div>
       </div>
     </div>
@@ -292,6 +311,7 @@
         <button class="panel-btn" type="button" id="edCopy" title="Copy transparent PNG"><svg aria-hidden="true"><use href="#i-copy"/></svg> Copy</button>
       </div>
       <label class="ed-slider" style="margin-top:4px"><span>Quality</span><input type="range" id="downloadQuality" min="40" max="100" value="92"><output id="qualityOut">92%</output></label>
+      <label class="editor-label" style="margin-top:6px;justify-content:space-between"><span>Target file size (KB, optional)</span><input class="editor-num" id="targetSizeKB" type="number" min="1" max="20000" placeholder="auto" style="width:92px"></label>
       <p class="export-file" id="resultName">image-removed.png</p>
     </div>
   </aside>

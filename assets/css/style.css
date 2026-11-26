@@ -359,3 +359,10 @@ p{margin:0 0 16px}
 .center-stack{display:flex;flex-direction:column;align-items:center;gap:16px}
 .reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
 .reveal.visible{opacity:1;transform:none}
+
+/* Floating upload shortcut available on every page */
+.floating-upload{position:fixed;right:18px;bottom:18px;z-index:80;display:inline-flex;align-items:center;gap:8px;padding:12px 18px;border-radius:999px;background:#0F70E6;color:#fff;font:inherit;font-size:.88rem;font-weight:700;text-decoration:none;box-shadow:0 8px 22px rgba(15,112,230,.32);transition:.16s}
+.floating-upload:hover{background:#0A5BC0;transform:translateY(-2px)}
+.floating-upload svg{width:18px;height:18px}
+body.result-open .floating-upload{display:none}
+@media(max-width:640px){.floating-upload{right:14px;bottom:14px;padding:11px 14px}.floating-upload span{display:none}}

@@ -431,6 +431,45 @@
     if (window.showToast) window.showToast('Auto enhance applied — undo with Ctrl+Z.');
   }
 
+  /* ---------- grain surgery: median denoise ---------- */
+  function denoise() {
+    var s = snapshot();
+    if (!s) return;
+    commitFilters();
+    var w = s.w, h = s.h;
+    var src = s.data.data;
+    var out = new Uint8ClampedArray(src.length);
+    for (var i = 0; i < src.length; i += 4) out[i + 3] = src[i + 3];
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var idx = (y * w + x) * 4;
+        if (src[idx + 3] === 0) { out[idx] = src[idx]; out[idx + 1] = src[idx + 1]; out[idx + 2] = src[idx + 2]; continue; }
+        var r = [], g = [], b = [];
+        for (var dy = -1; dy <= 1; dy++) {
+          for (var dx = -1; dx <= 1; dx++) {
+            var nx = Math.min(w - 1, Math.max(0, x + dx));
+            var ny = Math.min(h - 1, Math.max(0, y + dy));
+            var nidx = (ny * w + nx) * 4;
+            r.push(src[nidx]); g.push(src[nidx + 1]); b.push(src[nidx + 2]);
+          }
+        }
+        r.sort(function (a, bb) { return a - bb; });
+        g.sort(function (a, bb) { return a - bb; });
+        b.sort(function (a, bb) { return a - bb; });
+        out[idx] = r[4]; out[idx + 1] = g[4]; out[idx + 2] = b[4];
+      }
+    }
+    var c = canvasFrom(s);
+    var id = c.getContext('2d').createImageData(w, h);
+    id.data.set(out);
+    c.getContext('2d').putImageData(id, 0, 0);
+    canvas.width = w; canvas.height = h;
+    ctx.drawImage(c, 0, 0);
+    syncEffects();
+    commit();
+    if (window.showToast) window.showToast('Grain surgery applied — undo with Ctrl+Z.');
+  }
+
   /* ---------- design tools: text, elements, templates ---------- */
   function closeDesign() {
     ['text', 'shape', 'template'].forEach(function (n) {
@@ -925,6 +964,7 @@
       if (e.key === 'Enter') { e.preventDefault(); addText(); }
     });
     if ($('edAuto')) $('edAuto').addEventListener('click', autoEnhance);
+    if ($('edDenoise')) $('edDenoise').addEventListener('click', denoise);
     if ($('edCopy')) $('edCopy').addEventListener('click', copyImage);
     if ($('thumbOriginal')) $('thumbOriginal').addEventListener('click', toggleCompare);
     if ($('thumbEdit')) $('thumbEdit').addEventListener('click', endCompare);

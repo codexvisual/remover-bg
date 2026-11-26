@@ -17,6 +17,20 @@
     toast._timer = setTimeout(function () { toast.classList.remove('show'); }, 2800);
   };
 
+  /* ---------- floating upload shortcut on every page ---------- */
+  function addUploadShortcut() {
+    if (document.getElementById('floatingUploadBtn')) return;
+    var btn = document.createElement('a');
+    btn.id = 'floatingUploadBtn';
+    btn.className = 'floating-upload';
+    btn.href = 'upload.html';
+    btn.setAttribute('aria-label', 'Upload an image and remove its background');
+    btn.innerHTML = '<svg aria-hidden="true"><use href="#i-upload"/></svg><span>Upload image</span>';
+    document.body.appendChild(btn);
+  }
+  if (document.body) addUploadShortcut();
+  else document.addEventListener('DOMContentLoaded', addUploadShortcut);
+
   /* ---------- mobile menu ---------- */
   var toggle = document.querySelector('.menu-toggle');
   var nav = document.querySelector('.main-nav');
