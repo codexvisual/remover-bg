@@ -47,13 +47,43 @@ it" gallery, second upload area, blog, newsletter, rating and dark footer.
 Upload, drag-drop, paste, URL, sample images, AI removal, Magic Brush editing
 and download are all functional.
 
+## Post-removal editor
+
+The home page result view includes a full editor that also drives the export,
+so downloads match exactly what is on screen:
+
+- Undo / redo with a 40-step history (`Ctrl+Z`, `Ctrl+Shift+Z` / `Ctrl+Y`)
+- Rotate 90° either way, flip horizontally / vertically
+- Drag-to-crop overlay with corner handles, live X/Y/W/H fields and 1:1, 4:3,
+  16:9, 3:4 aspect locks; the crop box updates the numbers while you drag
+- Trim edges — removes transparent margins automatically (`T`)
+- Resize presets (Instagram, LinkedIn, HD, square, passport) plus custom
+  width / height with ratio lock
+- Brightness, contrast, saturation and blur with double-click / one-click reset
+- Backdrop blur (uses the original photo) and a soft drop shadow, shown live
+  and baked into the downloaded file
+- Gradient background templates or solid / transparent backgrounds
+- Compare against the original (hold with a mouse, tap to toggle on touch)
+- Reset backdrop and Reset all, plus live pixel dimensions
+- Export PNG, JPG or WebP with a quality slider
+
+Keyboard shortcuts: `R` rotate, `Shift+R` rotate left, `F` flip, `Shift+F`
+flip vertical, `C` crop, `E` resize, `T` trim.
+
+The same editor (including PNG / JPG / WebP export) is available on
+`upload.html`, so both upload flows share crop, resize, effects and history.
+
 ## Performance
 
-- Service worker (`sw.js`) caches the AI model, WASM runtime and static assets,
-  so repeat visits and repeat removals do not re-download the model.
+- Service worker (`sw.js`) keeps two caches: app files (network-first, so a
+  new deploy is never stale) and AI assets (cache-first). Model files cached by
+  older versions are migrated instead of re-downloaded.
 - AI input is downscaled to 1280 px before inference, cutting processing time
   on large photos.
 - WebGPU is used when the browser supports it; WASM is the fallback.
+- The editor writes to the visible canvas, so the brush, edits and export all
+  share one buffer.
+- Preconnect hints for `esm.sh` and `staticimgly.com` start the model fetch sooner.
 - Type and colour tokens (Poppins 600, `#454545`, `#0F70E6`) match remove.bg.
 
 ## Tools (tools.html)

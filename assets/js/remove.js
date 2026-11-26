@@ -281,8 +281,6 @@
     state.file = file;
     state.originalCanvas = makeCanvas(cutoutCanvas.width, cutoutCanvas.height);
     state.originalCanvas.getContext('2d').drawImage(originalImg, 0, 0, cutoutCanvas.width, cutoutCanvas.height);
-    state.resultCanvas = cutoutCanvas;
-    state.ctx = cutoutCanvas.getContext('2d');
 
     if (el.originalPreview) el.originalPreview.src = URL.createObjectURL(file);
     if (el.resultCanvas) {
@@ -291,8 +289,17 @@
       el.resultCanvas.getContext('2d').clearRect(0, 0, cutoutCanvas.width, cutoutCanvas.height);
       el.resultCanvas.getContext('2d').drawImage(cutoutCanvas, 0, 0);
     }
+    /* Edit the visible canvas directly so the editor, brush and download all share state. */
+    state.resultCanvas = el.resultCanvas || cutoutCanvas;
+    state.ctx = state.resultCanvas.getContext('2d');
     if (el.resultName) el.resultName.textContent = (file.name || 'image').replace(/\.[^.]+$/, '') + '-removed.png';
     state.bg = 'transparent'; state.gradient = null;
+    window.__editorGradient = null;
+    window.__editorGradientStops = null;
+    window.__editorEffects = { blur: 0, shadow: 0 };
+    var frameBg = $('frameBg');
+    if (frameBg) { frameBg.classList.remove('on'); frameBg.removeAttribute('data-src'); frameBg.style.backgroundImage = ''; frameBg.style.filter = ''; }
+    if (el.resultCanvas) el.resultCanvas.style.filter = '';
     paintBackground();
     el.uploadView.classList.add('hidden');
     el.resultView.classList.remove('hidden');
@@ -302,6 +309,7 @@
     if (resultSection) resultSection.classList.remove('hidden');
     if (el.errorMessage) el.errorMessage.classList.add('hidden');
     el.resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (window.EditorAPI && window.EditorAPI.refresh) window.EditorAPI.refresh();
   }
 
   function resetToUpload() {
@@ -382,7 +390,7 @@
     } else {
       ctx.clip();
       ctx.globalCompositeOperation = 'source-over';
-      ctx.drawImage(state.originalCanvas, 0, 0);
+      ctx.drawImage(state.originalCanvas, 0, 0, el.resultCanvas.width, el.resultCanvas.height);
     }
     ctx.restore();
   }
@@ -403,13 +411,62 @@
 
   /* ================= download ================= */
 
+  /* Backdrop effects are defined in CSS pixels at the preview size;
+     convert them to output pixels so the download matches what is on screen. */
+  function effectSettings() {
+    var fx = window.__editorEffects || {};
+    var cv = el.resultCanvas;
+    var previewWidth = cv && cv.clientWidth ? cv.clientWidth : 0;
+    var scale = cv && cv.width && previewWidth ? cv.width / previewWidth : 1;
+    return {
+      blur: Math.max(0, Math.min(60, Number(fx.blur) || 0)),
+      shadow: Math.max(0, Math.min(100, Number(fx.shadow) || 0)),
+      scale: scale
+    };
+  }
+
+  function drawBlurredBackdrop(ctx, w, h, blurCss, scale) {
+    var src = state.originalCanvas;
+    if (!src) return false;
+    var cover = Math.max(w / src.width, h / src.height);
+    /* Opaque base so heavy blur cannot fade out at the edges. */
+    ctx.drawImage(src, (w - src.width * cover) / 2, (h - src.height * cover) / 2, src.width * cover, src.height * cover);
+    var zoom = 1 + Math.max(0.12, (blurCss * scale * 2.4) / Math.min(w, h));
+    var dw = src.width * cover * zoom, dh = src.height * cover * zoom;
+    ctx.save();
+    ctx.filter = 'blur(' + (blurCss * scale) + 'px)';
+    ctx.drawImage(src, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    ctx.restore();
+    return true;
+  }
+
+  function drawCutout(ctx, w, h, shadow, scale) {
+    if (shadow > 0 && state.resultCanvas) {
+      var tmp = makeCanvas(w, h);
+      var t = tmp.getContext('2d');
+      t.drawImage(state.resultCanvas, 0, 0, w, h);
+      t.globalCompositeOperation = 'source-in';
+      t.fillStyle = '#0f172a';
+      t.fillRect(0, 0, w, h);
+      ctx.save();
+      ctx.filter = 'blur(' + ((6 + shadow * 0.22) * scale) + 'px)';
+      ctx.globalAlpha = Math.min(0.55, 0.18 + shadow / 300);
+      ctx.drawImage(tmp, 0, (2 + shadow * 0.12) * scale);
+      ctx.restore();
+    }
+    ctx.drawImage(state.resultCanvas, 0, 0, w, h);
+  }
+
   function exportCanvas() {
     var format = (el.downloadFormat && el.downloadFormat.value) || 'png';
+    var fx = effectSettings();
     var out = makeCanvas(state.resultCanvas.width, state.resultCanvas.height);
     var ctx = out.getContext('2d');
-    if (format !== 'jpg' && state.bg === 'transparent' && !window.__editorGradient) {
-      ctx.drawImage(state.resultCanvas, 0, 0);
-    } else {
+    var transparent = format !== 'jpg' && state.bg === 'transparent' && !window.__editorGradient;
+
+    if (fx.blur > 0) {
+      drawBlurredBackdrop(ctx, out.width, out.height, fx.blur, fx.scale);
+    } else if (!transparent) {
       if (window.__editorGradient) {
         var stops = window.__editorGradientStops || ['#8ab4ff', '#c4a4ff'];
         var grad = ctx.createLinearGradient(0, 0, out.width, out.height);
@@ -427,8 +484,8 @@
         ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, out.width, out.height);
       }
-      ctx.drawImage(state.resultCanvas, 0, 0);
     }
+    drawCutout(ctx, out.width, out.height, fx.shadow, fx.scale);
     var type = format === 'jpg' ? 'image/jpeg' : format === 'webp' ? 'image/webp' : 'image/png';
     return { canvas: out, type: type, ext: format };
   }
@@ -547,14 +604,14 @@
     el.resetBrush.addEventListener('click', function () {
       if (!state.ctx) return;
       state.ctx.clearRect(0, 0, state.resultCanvas.width, state.resultCanvas.height);
-      state.ctx.drawImage(state.originalCanvas, 0, 0);
+      state.ctx.drawImage(state.originalCanvas, 0, 0, state.resultCanvas.width, state.resultCanvas.height);
     });
   }
   // Rebind reset after a result exists (originalCanvas is null at load time).
   document.addEventListener('click', function (e) {
     if (!e.target.closest('#resetBrush') || !state.resultCanvas) return;
     state.ctx.clearRect(0, 0, state.resultCanvas.width, state.resultCanvas.height);
-    state.ctx.drawImage(state.originalCanvas, 0, 0);
+    state.ctx.drawImage(state.originalCanvas, 0, 0, state.resultCanvas.width, state.resultCanvas.height);
     if (window.showToast) window.showToast('Edits reset to the original cut-out.');
   });
 

@@ -7,6 +7,9 @@
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://esm.sh" crossorigin>
+<link rel="preconnect" href="https://staticimgly.com" crossorigin>
+<link rel="dns-prefetch" href="https://staticimgly.com">
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/home.css">
@@ -233,7 +236,7 @@
       <div class="progress hidden" id="progress"><div class="spinner"></div><div class="progress-text" id="progressText" style="font-weight:700;font-size:.9rem">Processing…</div><div class="progress-track"><i id="progressBar"></i></div></div>
       <div class="compare">
         <figure><figcaption>Original</figcaption><div class="canvas-frame" style="background:#eef2f8"><img id="originalPreview" alt="Original uploaded image"></div></figure>
-        <figure><figcaption>Background removed</figcaption><div class="canvas-frame" id="resultFrame"><div class="canvas-wrap" id="canvasWrap"><canvas id="resultCanvas"></canvas><div class="crop-overlay hidden" id="cropOverlay"><div class="crop-box" id="cropBox"><span class="crop-handle nw" data-handle="nw"></span><span class="crop-handle ne" data-handle="ne"></span><span class="crop-handle sw" data-handle="sw"></span><span class="crop-handle se" data-handle="se"></span></div></div></div></div></figure>
+        <figure><figcaption>Background removed</figcaption><div class="canvas-frame" id="resultFrame"><div class="canvas-wrap" id="canvasWrap"><div class="frame-bg" id="frameBg" aria-hidden="true"></div><canvas id="resultCanvas"></canvas><div class="crop-overlay hidden" id="cropOverlay"><div class="crop-box" id="cropBox"><span class="crop-handle nw" data-handle="nw"></span><span class="crop-handle ne" data-handle="ne"></span><span class="crop-handle sw" data-handle="sw"></span><span class="crop-handle se" data-handle="se"></span></div></div></div></div></figure>
       </div>
       <div class="result-tools">
         <p class="tool-label">Background</p>
@@ -252,6 +255,11 @@
             <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
             <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
           </div>
+        </div>
+        <div class="editor-row" aria-label="Backdrop effects">
+          <label class="editor-label">BG blur <input type="range" id="edBgBlur" min="0" max="40" value="0" aria-label="Blur the original background"><output id="bgBlurOut">0</output></label>
+          <label class="editor-label">Shadow <input type="range" id="edShadow" min="0" max="100" value="0" aria-label="Add a soft shadow"><output id="shadowOut">0</output></label>
+          <button class="editor-btn" id="edBackdropReset" type="button">Reset backdrop</button>
         </div>
         <div class="brush-bar" id="brushBar">
           <label><svg class="inline-icon"><use href="#i-brush"/></svg> Magic Brush:</label>
@@ -273,9 +281,12 @@
         <button class="editor-btn" data-edit="flipV" type="button">↕ Flip V</button>
         <button class="editor-btn" data-edit="crop" type="button">Crop</button>
         <button class="editor-btn" data-edit="resize" type="button">Resize</button>
+        <button class="editor-btn" data-edit="trim" type="button" title="Trim transparent edges (T)">Trim edges</button>
         <button class="editor-btn" id="edCompare" type="button" title="Hold to see original">Compare</button>
+        <button class="editor-btn" id="edResetAll" type="button" title="Reset every edit">Reset all</button>
         <span class="editor-info" id="edInfo"></span>
       </div>
+      <p class="editor-hint">Shortcuts: <kbd>R</kbd> rotate · <kbd>F</kbd> flip · <kbd>C</kbd> crop · <kbd>T</kbd> trim · <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo</p>
 
       <div class="editor-row" aria-label="Adjustments">
         <label class="editor-label">Brightness <input type="range" id="edBright" min="50" max="150" value="100"></label>

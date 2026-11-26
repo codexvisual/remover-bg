@@ -80,17 +80,12 @@
     try {
       if (/svg/.test(file.type)) file = await toPngFile(file);
 
-      var dataUrl = await new Promise(function (resolve, reject) {
-        var reader = new FileReader();
-        reader.onload = function () { resolve(reader.result); };
-        reader.onerror = function () { reject(new Error('Could not read the file.')); };
-        reader.readAsDataURL(file);
-      });
       var img = await new Promise(function (resolve, reject) {
+        var url = URL.createObjectURL(file);
         var image = new Image();
-        image.onload = function () { resolve(image); };
-        image.onerror = function () { reject(new Error('That image could not be opened.')); };
-        image.src = dataUrl;
+        image.onload = function () { URL.revokeObjectURL(url); resolve(image); };
+        image.onerror = function () { URL.revokeObjectURL(url); reject(new Error('That image could not be opened.')); };
+        image.src = url;
       });
 
       var cutout = await window.BackgroundEngine.remove(file, setProgress);
@@ -112,12 +107,19 @@
       $('originalPreview').src = previewUrl;
       $('resultFrame').style.backgroundColor = '';
       $('resultFrame').style.backgroundImage = '';
+      window.__editorGradient = null;
+      window.__editorGradientStops = null;
+      window.__editorEffects = { blur: 0, shadow: 0 };
+      var frameBg = $('frameBg');
+      if (frameBg) { frameBg.classList.remove('on'); frameBg.removeAttribute('data-src'); frameBg.style.backgroundImage = ''; frameBg.style.filter = ''; }
+      if (canvas) canvas.style.filter = '';
       state.bg = 'transparent';
       Array.prototype.forEach.call(document.querySelectorAll('.up-swatch'), function (s) {
         s.classList.toggle('active', s.dataset.bg === 'transparent');
       });
       setProgress(100, 'Ready!');
       show(result);
+      if (window.EditorAPI && window.EditorAPI.refresh) window.EditorAPI.refresh();
     } catch (e) {
       console.error(e);
       show(idle);
@@ -144,24 +146,81 @@
     if (state.bg === 'custom') frame.style.backgroundColor = state.bgColor;
   }
 
+  function effectSettings() {
+    var fx = window.__editorEffects || {};
+    var cv = $('resultCanvas');
+    var previewWidth = cv && cv.clientWidth ? cv.clientWidth : 0;
+    return {
+      blur: Math.max(0, Math.min(60, Number(fx.blur) || 0)),
+      shadow: Math.max(0, Math.min(100, Number(fx.shadow) || 0)),
+      scale: cv && cv.width && previewWidth ? cv.width / previewWidth : 1
+    };
+  }
+
+  function drawBlurredBackdrop(ctx, w, h, blurCss, scale) {
+    var src = state.originalCanvas;
+    if (!src) return;
+    var cover = Math.max(w / src.width, h / src.height);
+    ctx.drawImage(src, (w - src.width * cover) / 2, (h - src.height * cover) / 2, src.width * cover, src.height * cover);
+    var zoom = 1 + Math.max(0.12, (blurCss * scale * 2.4) / Math.min(w, h));
+    var dw = src.width * cover * zoom, dh = src.height * cover * zoom;
+    ctx.save();
+    ctx.filter = 'blur(' + (blurCss * scale) + 'px)';
+    ctx.drawImage(src, (w - dw) / 2, (h - dh) / 2, dw, dh);
+    ctx.restore();
+  }
+
   function download() {
-    if (!state.cutout) return;
-    var canvas = document.createElement('canvas');
-    canvas.width = state.cutout.width; canvas.height = state.cutout.height;
-    var ctx = canvas.getContext('2d');
-    if (state.bg !== 'transparent') {
-      ctx.fillStyle = state.bg === 'white' ? '#ffffff' : state.bg === 'black' ? '#111827' : state.bgColor;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var src = $('resultCanvas');
+    if (!src || !state.originalCanvas) return;
+    var format = ($('downloadFormat') && $('downloadFormat').value) || 'png';
+    var fx = effectSettings();
+    var out = document.createElement('canvas');
+    out.width = src.width; out.height = src.height;
+    var ctx = out.getContext('2d');
+    var gradient = window.__editorGradient;
+    var transparent = format !== 'jpg' && state.bg === 'transparent' && !gradient;
+
+    if (fx.blur > 0) {
+      drawBlurredBackdrop(ctx, out.width, out.height, fx.blur, fx.scale);
+    } else if (!transparent) {
+      if (gradient) {
+        var stops = window.__editorGradientStops || ['#8ab4ff', '#c4a4ff'];
+        var grad = ctx.createLinearGradient(0, 0, out.width, out.height);
+        grad.addColorStop(0, stops[0]); grad.addColorStop(1, stops[1] || stops[0]);
+        ctx.fillStyle = grad;
+      } else {
+        ctx.fillStyle = state.bg === 'white' ? '#ffffff' : state.bg === 'black' ? '#111827' : state.bgColor;
+      }
+      ctx.fillRect(0, 0, out.width, out.height);
     }
-    ctx.drawImage(state.cutout, 0, 0);
-    canvas.toBlob(function (blob) {
+
+    if (fx.shadow > 0) {
+      var tmp = document.createElement('canvas');
+      tmp.width = out.width; tmp.height = out.height;
+      var t = tmp.getContext('2d');
+      t.drawImage(src, 0, 0);
+      t.globalCompositeOperation = 'source-in';
+      t.fillStyle = '#0f172a';
+      t.fillRect(0, 0, out.width, out.height);
+      ctx.save();
+      ctx.filter = 'blur(' + ((6 + fx.shadow * 0.22) * fx.scale) + 'px)';
+      ctx.globalAlpha = Math.min(0.55, 0.18 + fx.shadow / 300);
+      ctx.drawImage(tmp, 0, (2 + fx.shadow * 0.12) * fx.scale);
+      ctx.restore();
+    }
+    ctx.drawImage(src, 0, 0);
+
+    var type = format === 'jpg' ? 'image/jpeg' : format === 'webp' ? 'image/webp' : 'image/png';
+    var quality = Number(($('downloadQuality') || {}).value || 92) / 100;
+    out.toBlob(function (blob) {
       if (!blob) { error('Download failed. Please try again.'); return; }
       var url = URL.createObjectURL(blob);
       var a = document.createElement('a');
-      a.href = url; a.download = 'remover-bg-result.png';
+      a.href = url; a.download = 'remover-bg-result.' + format;
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
-    }, 'image/png');
+    }, type, quality);
   }
 
   /* ---- events ---- */
