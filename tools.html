@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Free image tools — Remover bg</title>
+<meta name="description" content="Free browser-based image tools: resize images, convert formats and lay out passport photos.">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/css/style.css">
+<style>.tool-output{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:180px}.tool-inline{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.tool-inline .field{flex:1;min-width:130px;margin:0}</style>
+</head>
+<body>
+<div class="announce">🎉 New: generate custom AI backgrounds in one click — no prompt needed. <a href="features.html#generator">See how it works</a><button class="announce-close" aria-label="Dismiss">×</button></div>
+<header class="site-header"><div class="container header-inner">
+  <a href="index.html" class="logo"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a>
+  <nav class="main-nav"><a href="features.html">Features</a><a href="use-cases.html">Use cases</a><a href="tools.html">Tools</a><a href="pricing.html">Pricing</a><a href="api.html">API</a><a href="blog.html">Blog</a></nav>
+  <div class="header-actions"><a href="contact.html" class="login">Log in</a><a href="pricing.html" class="btn btn-primary btn-sm">Sign up free</a><button class="menu-toggle" aria-label="Open menu"><span></span><span></span><span></span></button></div>
+</div></header>
+
+<section class="page-hero"><div class="container">
+  <div class="breadcrumb"><a href="index.html">Home</a> / Tools</div><span class="eyebrow">Free tools</span>
+  <h1>Small image tools that just work</h1><p>Resize, convert and format photos right in your browser. No uploads to a server, no watermarks.</p>
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="grid grid-3" style="margin-bottom:46px">
+    <div class="card reveal"><div class="card-icon"><svg><use href="#i-crop"/></svg></div><h3>Image resizer</h3><p>Change dimensions while keeping proportions.</p></div>
+    <div class="card reveal"><div class="card-icon"><svg><use href="#i-layers"/></svg></div><h3>Format converter</h3><p>Switch between PNG, JPG and WebP.</p></div>
+    <div class="card reveal"><div class="card-icon"><svg><use href="#i-camera"/></svg></div><h3>Passport photo maker</h3><p>Standard ID photo sizes on a clean backdrop.</p></div>
+  </div>
+
+  <div class="card reveal" id="resizer" style="margin-bottom:26px">
+    <span class="eyebrow">Tool 01</span><h3>Image resizer</h3>
+    <p class="muted">Upload a photo, set an exact pixel size and download the result. Aspect ratio is locked by default.</p>
+    <div class="tool-inline" style="margin:20px 0">
+      <div class="field"><label>Choose image</label><input type="file" id="resizerInput" accept="image/*"></div>
+      <div class="field"><label>Width (px)</label><input type="number" id="resizerWidth" value="800"></div>
+      <div class="field"><label>Height (px)</label><input type="number" id="resizerHeight" value="600"></div>
+      <div class="field" style="flex:0 0 auto"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="resizerLock" checked style="width:auto"> Lock ratio</label></div>
+      <div class="field" style="flex:0 0 auto"><label>Output</label><select id="resizerType"><option value="png">PNG</option><option value="jpg">JPG</option></select></div>
+      <button class="btn btn-primary" id="resizerApply" type="button">Apply</button>
+    </div>
+    <div class="tool-output" id="resizerPreview"><span class="muted">Preview appears here</span></div>
+    <button class="btn btn-outline" id="resizerDownload" type="button" style="margin-top:16px"><svg class="inline-icon"><use href="#i-download"/></svg> Download resized image</button>
+  </div>
+
+  <div class="card reveal" id="converter" style="margin-bottom:26px">
+    <span class="eyebrow">Tool 02</span><h3>Format converter</h3>
+    <p class="muted">Convert an image between PNG, JPG and WebP. Everything happens locally in your browser.</p>
+    <div class="tool-inline" style="margin:20px 0">
+      <div class="field"><label>Choose image</label><input type="file" id="converterInput" accept="image/*"></div>
+      <div class="field"><label>Convert to</label><select id="converterFormat"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></div>
+      <button class="btn btn-primary" id="converterApply" type="button">Convert</button>
+    </div>
+    <div class="tool-output" id="converterPreview"><span class="muted">Preview appears here</span></div>
+    <button class="btn btn-outline" id="converterDownload" type="button" style="margin-top:16px"><svg class="inline-icon"><use href="#i-download"/></svg> Download converted image</button>
+  </div>
+
+  <div class="card reveal" id="passport">
+    <span class="eyebrow">Tool 03</span><h3>Passport photo maker</h3>
+    <p class="muted">Crop and centre a portrait into a standard ID photo size. Tip: remove the background on the <a href="index.html" style="color:var(--blue);font-weight:700">home page</a> first for the cleanest result.</p>
+    <div class="tool-inline" style="margin:20px 0">
+      <div class="field"><label>Choose photo</label><input type="file" id="passportInput" accept="image/*"></div>
+      <div class="field"><label>Photo size</label><select id="passportSize"><option value="35x45">35 × 45 mm (standard)</option><option value="40x50">40 × 50 mm</option><option value="50x50">50 × 50 mm</option><option value="25x35">25 × 35 mm</option></select></div>
+      <div class="field"><label>Background</label><select id="passportBg"><option value="#ffffff">White</option><option value="#d9e2f0">Light grey</option><option value="#e9f1ff">Light blue</option></select></div>
+      <button class="btn btn-primary" id="passportApply" type="button">Update</button>
+    </div>
+    <div class="tool-output" id="passportPreview"><span class="muted">Preview appears here</span></div>
+    <button class="btn btn-outline" id="passportDownload" type="button" style="margin-top:16px"><svg class="inline-icon"><use href="#i-download"/></svg> Download passport photo</button>
+  </div>
+</div></section>
+
+<footer class="site-footer"><div class="container">
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a><p>Automatically remove image backgrounds with AI. A product by Filofa Technology.</p></div>
+    <div class="footer-col"><h4>Learn more</h4><ul><li><a href="features.html">All features</a></li><li><a href="use-cases.html">Use cases</a></li><li><a href="pricing.html">Pricing</a></li></ul></div>
+    <div class="footer-col"><h4>Tools &amp; API</h4><ul><li><a href="api.html">API docs</a></li><li><a href="tools.html">All tools</a></li></ul></div>
+    <div class="footer-col"><h4>Support</h4><ul><li><a href="faq.html">Help &amp; FAQs</a></li><li><a href="contact.html">Contact us</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="blog.html">Blog</a></li><li><a href="about.html">About us</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Remover bg — a Filofa Technology product.</p><div class="footer-legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="cookies.html">Cookie Policy</a></div></div>
+</div></footer>
+<script src="assets/js/icons.js"></script><script src="assets/js/site.js"></script><script src="assets/js/tools.js"></script>
+</body></html>

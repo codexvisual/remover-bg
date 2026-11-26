@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API documentation — Remover bg</title>
+<meta name="description" content="Learn how to remove image backgrounds with the Remover bg API. Endpoints, authentication, code examples and response format.">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body>
+<div class="announce">🎉 New: generate custom AI backgrounds in one click — no prompt needed. <a href="features.html#generator">See how it works</a><button class="announce-close" aria-label="Dismiss">×</button></div>
+<header class="site-header"><div class="container header-inner">
+  <a href="index.html" class="logo"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a>
+  <nav class="main-nav"><a href="features.html">Features</a><a href="use-cases.html">Use cases</a><a href="tools.html">Tools</a><a href="pricing.html">Pricing</a><a href="api.html">API</a><a href="blog.html">Blog</a></nav>
+  <div class="header-actions"><a href="contact.html" class="login">Log in</a><a href="pricing.html" class="btn btn-primary btn-sm">Sign up free</a><button class="menu-toggle" aria-label="Open menu"><span></span><span></span><span></span></button></div>
+</div></header>
+
+<section class="page-hero"><div class="container">
+  <div class="breadcrumb"><a href="index.html">Home</a> / API</div><span class="eyebrow">Developers</span>
+  <h1>Background removal API</h1><p>A simple REST endpoint that turns an image into a transparent PNG. Integrate it in minutes with any language.</p>
+</div></section>
+
+<section class="section"><div class="container api-layout">
+  <aside class="api-sidebar">
+    <p style="font-size:.78rem;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)">On this page</p>
+    <a href="#overview">Overview</a><a href="#auth">Authentication</a><a href="#endpoint">Endpoint</a>
+    <a href="#examples">Code examples</a><a href="#response">Response</a><a href="#errors">Errors</a><a href="#bulk">Bulk &amp; webhooks</a>
+  </aside>
+
+  <div style="min-width:0">
+    <div id="overview" style="margin-bottom:44px">
+      <h2>Overview</h2>
+      <p class="lead">Send an image file with a POST request and receive a cut-out PNG. The API accepts JPG, PNG, WebP and BMP input up to 15 MB.</p>
+      <div class="grid grid-3" style="gap:14px;margin-top:24px">
+        <div class="card" style="padding:20px"><div class="card-icon" style="width:38px;height:38px;margin-bottom:12px"><svg><use href="#i-bolt"/></svg></div><h3 style="font-size:1rem">Fast</h3><p style="font-size:.86rem">Typical response in 2–5 seconds.</p></div>
+        <div class="card" style="padding:20px"><div class="card-icon" style="width:38px;height:38px;margin-bottom:12px"><svg><use href="#i-shield"/></svg></div><h3 style="font-size:1rem">Secure</h3><p style="font-size:.86rem">HTTPS only, API key authentication.</p></div>
+        <div class="card" style="padding:20px"><div class="card-icon" style="width:38px;height:38px;margin-bottom:12px"><svg><use href="#i-globe"/></svg></div><h3 style="font-size:1rem">Global</h3><p style="font-size:.86rem">Available from anywhere.</p></div>
+      </div>
+    </div>
+
+    <div id="auth" style="margin-bottom:44px">
+      <h2>Authentication</h2>
+      <p class="lead">Pass your API key in the <code>X-API-Key</code> header. Keep the key on your server — never expose it in client-side code.</p>
+      <div class="code-card"><div class="code-head"><span>HTTP header</span><button class="copy-btn">Copy</button></div><pre><code>X-API-Key: your_api_key_here</code></pre></div>
+    </div>
+
+    <div id="endpoint" style="margin-bottom:44px">
+      <h2>Endpoint</h2>
+      <div class="code-card"><div class="code-head"><span>POST</span><button class="copy-btn">Copy</button></div><pre><code><span class="tok-key">POST</span> https://api.remove.bg/v1.0/removebg
+Content-Type: multipart/form-data
+
+<span class="tok-key">image_file</span>: @photo.jpg
+<span class="tok-key">size</span>: auto</code></pre></div>
+      <p class="muted" style="font-size:.9rem">This demo site also ships with a ready-to-use server proxy at <code>api/remove.php</code>. Set your key there and point <code>assets/js/config.js</code> to it.</p>
+    </div>
+
+    <div id="examples" style="margin-bottom:44px">
+      <h2>Code examples</h2>
+
+      <h3 style="margin-top:22px">cURL</h3>
+      <div class="code-card"><div class="code-head"><span>curl</span><button class="copy-btn">Copy</button></div><pre><code>curl -H <span class="tok-str">"X-API-Key: YOUR_KEY"</span> \
+  -F <span class="tok-str">"image_file=@photo.jpg"</span> \
+  -F <span class="tok-str">"size=auto"</span> \
+  https://api.remove.bg/v1.0/removebg \
+  -o result.png</code></pre></div>
+
+      <h3>JavaScript (fetch)</h3>
+      <div class="code-card"><div class="code-head"><span>JavaScript</span><button class="copy-btn">Copy</button></div><pre><code><span class="tok-key">const</span> form = <span class="tok-key">new</span> FormData();
+form.append(<span class="tok-str">'image_file'</span>, file);
+
+<span class="tok-key">const</span> res = <span class="tok-key">await</span> fetch(<span class="tok-str">'https://api.remove.bg/v1.0/removebg'</span>, {
+  method: <span class="tok-str">'POST'</span>,
+  headers: { <span class="tok-str">'X-API-Key'</span>: API_KEY },
+  body: form
+});
+<span class="tok-key">const</span> blob = <span class="tok-key">await</span> res.blob();</code></pre></div>
+
+      <h3>Python</h3>
+      <div class="code-card"><div class="code-head"><span>Python</span><button class="copy-btn">Copy</button></div><pre><code><span class="tok-key">import</span> requests
+
+response = requests.<span class="tok-fn">post</span>(
+    <span class="tok-str">'https://api.remove.bg/v1.0/removebg'</span>,
+    headers={<span class="tok-str">'X-API-Key'</span>: <span class="tok-str">'YOUR_KEY'</span>},
+    files={<span class="tok-str">'image_file'</span>: <span class="tok-fn">open</span>(<span class="tok-str">'photo.jpg'</span>, <span class="tok-str">'rb'</span>)},
+    data={<span class="tok-str">'size'</span>: <span class="tok-str">'auto'</span>}
+)
+<span class="tok-key">with</span> <span class="tok-fn">open</span>(<span class="tok-str">'result.png'</span>, <span class="tok-str">'wb'</span>) <span class="tok-key">as</span> f:
+    f.<span class="tok-fn">write</span>(response.content)</code></pre></div>
+
+      <h3>PHP</h3>
+      <div class="code-card"><div class="code-head"><span>PHP</span><button class="copy-btn">Copy</button></div><pre><code>$ch = curl_init(<span class="tok-str">'https://api.remove.bg/v1.0/removebg'</span>);
+curl_setopt_array($ch, [
+  CURLOPT_HTTPHEADER =&gt; [<span class="tok-str">'X-API-Key: YOUR_KEY'</span>],
+  CURLOPT_POSTFIELDS =&gt; [<span class="tok-str">'image_file'</span> =&gt; <span class="tok-key">new</span> CURLFile(<span class="tok-str">'photo.jpg'</span>)],
+  CURLOPT_RETURNTRANSFER =&gt; <span class="tok-key">true</span>
+]);
+file_put_contents(<span class="tok-str">'result.png'</span>, curl_exec($ch));</code></pre></div>
+    </div>
+
+    <div id="response" style="margin-bottom:44px">
+      <h2>Response</h2>
+      <p class="lead">A successful request returns the PNG file itself. If you request JSON callbacks, you receive metadata like this:</p>
+      <div class="code-card"><div class="code-head"><span>200 OK</span><button class="copy-btn">Copy</button></div><pre><code>{
+  <span class="tok-str">"data"</span>: {
+    <span class="tok-str">"result_url"</span>: <span class="tok-str">"https://..."</span>,
+    <span class="tok-str">"width"</span>: 1024,
+    <span class="tok-str">"height"</span>: 1024
+  }
+}</code></pre></div>
+    </div>
+
+    <div id="errors" style="margin-bottom:44px">
+      <h2>Errors</h2>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:520px;background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm)">
+          <thead><tr style="background:#f1f5fb"><th style="text-align:left;padding:14px">Status</th><th style="text-align:left;padding:14px">Meaning</th></tr></thead>
+          <tbody>
+            <tr><td style="padding:13px 14px;border-top:1px solid var(--line)"><b>400</b></td><td style="padding:13px 14px;border-top:1px solid var(--line)">Invalid or missing image</td></tr>
+            <tr><td style="padding:13px 14px;border-top:1px solid var(--line)"><b>401</b></td><td style="padding:13px 14px;border-top:1px solid var(--line)">Invalid API key</td></tr>
+            <tr><td style="padding:13px 14px;border-top:1px solid var(--line)"><b>402</b></td><td style="padding:13px 14px;border-top:1px solid var(--line)">Out of credits</td></tr>
+            <tr><td style="padding:13px 14px;border-top:1px solid var(--line)"><b>429</b></td><td style="padding:13px 14px;border-top:1px solid var(--line)">Rate limit reached</td></tr>
+            <tr><td style="padding:13px 14px;border-top:1px solid var(--line)"><b>500</b></td><td style="padding:13px 14px;border-top:1px solid var(--line)">Processing failed — retry</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <div id="bulk">
+      <h2>Bulk jobs &amp; webhooks</h2>
+      <p class="lead">For large batches, upload a ZIP file or use the async endpoint with a <code>webhook_url</code>. Your server receives a POST when the job finishes.</p>
+      <div class="code-card"><div class="code-head"><span>Async request</span><button class="copy-btn">Copy</button></div><pre><code>{
+  <span class="tok-str">"image_file"</span>: <span class="tok-str">"@..."</span>,
+  <span class="tok-str">"webhook_url"</span>: <span class="tok-str">"https://yoursite.com/hooks/removebg"</span>
+}</code></pre></div>
+      <a href="contact.html" class="btn btn-primary">Get API access <svg class="inline-icon"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</div></section>
+
+<footer class="site-footer"><div class="container">
+  <div class="footer-grid">
+    <div class="footer-brand"><a href="index.html" class="logo"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a><p>Automatically remove image backgrounds with AI. A product by Filofa Technology.</p></div>
+    <div class="footer-col"><h4>Learn more</h4><ul><li><a href="features.html">All features</a></li><li><a href="use-cases.html">Use cases</a></li><li><a href="pricing.html">Pricing</a></li></ul></div>
+    <div class="footer-col"><h4>Tools &amp; API</h4><ul><li><a href="api.html">API docs</a></li><li><a href="tools.html">All tools</a></li></ul></div>
+    <div class="footer-col"><h4>Support</h4><ul><li><a href="faq.html">Help &amp; FAQs</a></li><li><a href="contact.html">Contact us</a></li></ul></div>
+    <div class="footer-col"><h4>Company</h4><ul><li><a href="blog.html">Blog</a></li><li><a href="about.html">About us</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>© 2026 Remover bg — a Filofa Technology product.</p><div class="footer-legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="cookies.html">Cookie Policy</a></div></div>
+</div></footer>
+<script src="assets/js/icons.js"></script><script src="assets/js/site.js"></script>
+</body></html>
