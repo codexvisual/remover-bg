@@ -271,6 +271,12 @@
       <button class="stage-chip" type="button" id="edCompare" title="Hold to see the original"><svg class="inline-icon" aria-hidden="true"><use href="#i-compare"/></svg>Compare</button>
       <button class="stage-chip" type="button" id="edResetAll" title="Reset every edit"><svg class="inline-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Reset all</button>
       <span class="stage-dim" id="edInfo">—</span>
+      <span class="stage-dim" id="zoomGroup" style="gap:4px">
+        <button class="stage-chip" type="button" id="zoomOut" title="Zoom out">−</button>
+        <input type="range" id="zoomRange" min="100" max="400" value="100" aria-label="Zoom level" style="width:90px;accent-color:var(--blue)">
+        <button class="stage-chip" type="button" id="zoomIn" title="Zoom in">+</button>
+        <button class="stage-chip" type="button" id="zoomReset" title="Reset zoom">100%</button>
+      </span>
     </div>
   </div>
 
@@ -381,6 +387,7 @@
     <div class="ed-pane hidden" data-pane="adjust" role="tabpanel">
       <button class="panel-btn wide" type="button" id="edAuto"><svg aria-hidden="true"><use href="#i-wand"/></svg> Auto enhance</button>
     <button class="panel-btn wide" type="button" id="edDenoise"><svg aria-hidden="true"><use href="#i-spark"/></svg> Grain surgery</button>
+    <button class="panel-btn wide" type="button" id="edSignature"><svg aria-hidden="true"><use href="#i-trim"/></svg> Signature mode (300 x 80)</button>
       <p class="tool-label">Looks</p>
       <div class="ed-presets" role="group" aria-label="Colour presets">
         <button class="ed-preset active" type="button" data-preset="original">Original</button>

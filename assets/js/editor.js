@@ -5,6 +5,7 @@
   var history = [], historyIndex = -1, initialSnapshot = null;
   var filterBase = null, filterOrigin = null;
   var compareBackup = null, comparePinned = false, compareDownAt = 0;
+  var zoom = 1, panX = 0, panY = 0, panning = false, panStart = null;
   var $ = function (id) { return document.getElementById(id); };
 
   function snapshot() {
@@ -244,6 +245,23 @@
   }
 
   /* ---------- compare ---------- */
+  function applyZoom() {
+    var view = $('compareView');
+    if (!view) return;
+    view.style.transform = 'translate(' + panX + 'px,' + panY + 'px) scale(' + zoom + ')';
+    var out = $('zoomRange'), label = $('zoomReset');
+    if (out) out.value = Math.round(zoom * 100);
+    if (label) label.textContent = Math.round(zoom * 100) + '%';
+  }
+
+  function setZoom(z) {
+    zoom = Math.max(1, Math.min(4, z));
+    if (zoom === 1) { panX = 0; panY = 0; }
+    applyZoom();
+  }
+
+  function resetZoom() { setZoom(1); }
+
   function startCompare() {
     if (!ready || !canvas || compareBackup) return;
     var img = $('originalPreview');
@@ -468,6 +486,59 @@
     syncEffects();
     commit();
     if (window.showToast) window.showToast('Grain surgery applied — undo with Ctrl+Z.');
+  }
+
+  /* ---------- signature mode: high-contrast trim to 300 x 80 ---------- */
+  function signatureMode() {
+    var s = snapshot();
+    if (!s) return;
+    commitFilters();
+    var w = s.w, h = s.h;
+    var src = s.data.data;
+    var out = new Uint8ClampedArray(src.length);
+    for (var i = 0; i < src.length; i += 4) {
+      var a = src[i + 3];
+      if (a < 16) { out[i] = 255; out[i+1] = 255; out[i+2] = 255; out[i+3] = 0; continue; }
+      var lum = 0.2126 * src[i] + 0.7152 * src[i+1] + 0.0722 * src[i+2];
+      var v = lum < 150 ? 0 : 255;
+      out[i] = v; out[i+1] = v; out[i+2] = v; out[i+3] = 255;
+    }
+    var c = canvasFrom(s);
+    var id = c.getContext('2d').createImageData(w, h);
+    id.data.set(out);
+    c.getContext('2d').putImageData(id, 0, 0);
+
+    // trim transparent/white margins
+    var ctx2 = c.getContext('2d');
+    var img = ctx2.getImageData(0, 0, w, h);
+    var px = img.data;
+    var minX = w, minY = h, maxX = -1, maxY = -1;
+    for (var y = 0; y < h; y++) {
+      for (var x = 0; x < w; x++) {
+        var idx = (y * w + x) * 4;
+        if (px[idx+3] > 0 && !(px[idx] > 240 && px[idx+1] > 240 && px[idx+2] > 240)) {
+          if (x < minX) minX = x; if (x > maxX) maxX = x;
+          if (y < minY) minY = y; if (y > maxY) maxY = y;
+        }
+      }
+    }
+    if (maxX < minX || maxY < minY) { minX = 0; minY = 0; maxX = w - 1; maxY = h - 1; }
+    var tw = maxX - minX + 1, th = maxY - minY + 1;
+    var scale = Math.min(300 / tw, 80 / th);
+    var dw = Math.max(1, Math.round(tw * scale));
+    var dh = Math.max(1, Math.round(th * scale));
+    var ox = Math.round((300 - dw) / 2);
+    var oy = Math.round((80 - dh) / 2);
+    var final = document.createElement('canvas');
+    final.width = 300; final.height = 80;
+    var fctx = final.getContext('2d');
+    fctx.fillStyle = '#ffffff'; fctx.fillRect(0, 0, 300, 80);
+    fctx.drawImage(c, minX, minY, tw, th, ox, oy, dw, dh);
+    canvas.width = 300; canvas.height = 80;
+    ctx.drawImage(final, 0, 0);
+    syncEffects();
+    commit();
+    if (window.showToast) window.showToast('Signature ready at 300 x 80 — undo with Ctrl+Z.');
   }
 
   /* ---------- design tools: text, elements, templates ---------- */
@@ -750,6 +821,7 @@
       $('cropW').value = Math.round(canvas.width * 0.7);
       $('cropH').value = Math.round(canvas.height * 0.7);
       $('cropRatio').value = 'free';
+        resetZoom();
       setCropActive(true);
     }
   }
@@ -836,6 +908,7 @@
     clearTemplates();
     hideRows();
     closeDesign();
+    resetZoom();
     markPreset('original');
     markLook('clean');
     activateTab('cutout');
@@ -965,10 +1038,41 @@
     });
     if ($('edAuto')) $('edAuto').addEventListener('click', autoEnhance);
     if ($('edDenoise')) $('edDenoise').addEventListener('click', denoise);
+    if ($('edSignature')) $('edSignature').addEventListener('click', signatureMode);
     if ($('edCopy')) $('edCopy').addEventListener('click', copyImage);
     if ($('thumbOriginal')) $('thumbOriginal').addEventListener('click', toggleCompare);
     if ($('thumbEdit')) $('thumbEdit').addEventListener('click', endCompare);
     if ($('downloadQuality')) $('downloadQuality').addEventListener('input', syncSliderOut);
+
+    /* Zoom & pan */
+    if ($('zoomIn')) $('zoomIn').addEventListener('click', function () { setZoom(zoom + 0.25); });
+    if ($('zoomOut')) $('zoomOut').addEventListener('click', function () { setZoom(zoom - 0.25); });
+    if ($('zoomReset')) $('zoomReset').addEventListener('click', resetZoom);
+    if ($('zoomRange')) $('zoomRange').addEventListener('input', function () { setZoom(Number($('zoomRange').value) / 100); });
+    var stage = $('compareView') && $('compareView').parentElement;
+    if (stage) {
+      stage.addEventListener('wheel', function (e) {
+        if (e.target && e.target.closest && e.target.closest('.crop-overlay')) return;
+        e.preventDefault();
+        var delta = e.deltaY < 0 ? 0.15 : -0.15;
+        setZoom(zoom + delta);
+      }, { passive: false });
+      stage.addEventListener('pointerdown', function (e) {
+        if (zoom <= 1) return;
+        if (e.target && e.target.closest && (e.target.closest('button,input,select,.crop-handle'))) return;
+        panning = true;
+        panStart = { x: e.clientX - panX, y: e.clientY - panY };
+        stage.setPointerCapture(e.pointerId);
+      });
+      stage.addEventListener('pointermove', function (e) {
+        if (!panning || !panStart) return;
+        panX = e.clientX - panStart.x;
+        panY = e.clientY - panStart.y;
+        applyZoom();
+      });
+      stage.addEventListener('pointerup', function () { panning = false; panStart = null; });
+      stage.addEventListener('pointercancel', function () { panning = false; panStart = null; });
+    }
 
     /* Compare: hold with the mouse, tap to toggle on touch. */
     var compare = $('edCompare');

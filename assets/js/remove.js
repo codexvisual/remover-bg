@@ -726,6 +726,19 @@
     handleFile(files[0]);
   });
 
+  /* Paste an image straight from the clipboard */
+  document.addEventListener('paste', function (e) {
+    if (state.busy) return;
+    var items = e.clipboardData && e.clipboardData.items;
+    if (!items) return;
+    for (var i = 0; i < items.length; i++) {
+      if (items[i].type && items[i].type.indexOf('image/') === 0) {
+        var f = items[i].getAsFile();
+        if (f) { e.preventDefault(); handleFile(f); return; }
+      }
+    }
+  });
+
   /* Expose a tiny API for other pages / demos */
   window.RemoveBG = {
     process: handleFile,
