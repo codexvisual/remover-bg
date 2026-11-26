@@ -80,6 +80,25 @@
     if (el.progress) el.progress.classList.add('hidden');
   }
 
+  /* Show the uploaded picture immediately, while the AI removes the background. */
+  function showUploadedPreview(file) {
+    var p = $('processingPreview');
+    if (!p) return;
+    if (p.dataset.url) URL.revokeObjectURL(p.dataset.url);
+    var url = URL.createObjectURL(file);
+    p.dataset.url = url;
+    p.src = url;
+    p.classList.remove('hidden');
+  }
+
+  function hideUploadedPreview() {
+    var p = $('processingPreview');
+    if (!p) return;
+    p.classList.add('hidden');
+    if (p.dataset.url) { URL.revokeObjectURL(p.dataset.url); delete p.dataset.url; }
+    p.removeAttribute('src');
+  }
+
   function showError(message) {
     if (!el.errorMessage) return;
     el.errorMessage.textContent = message;
@@ -315,6 +334,7 @@
 
   function resetToUpload() {
     state.file = null;
+    hideUploadedPreview();
     el.resultView.classList.add('hidden');
     el.uploadView.classList.remove('hidden');
     var hero = $('heroSection');
@@ -333,18 +353,20 @@
     if (file.size > maxBytes) { showError('That image is larger than ' + CFG.maxFileSizeMB + ' MB. Please choose a smaller file.'); return; }
     state.busy = true;
     showError('');
+    showUploadedPreview(file);
     try {
       setProgress(6, 'Reading ' + (file.name || 'image') + '…');
       var img = await fileToImage(file);
       var cutout = await removeBackground(file, setProgress);
       setProgress(100, 'Ready!');
       showResult(file, img, cutout);
-      setTimeout(hideProgress, 350);
+      setTimeout(function () { hideProgress(); hideUploadedPreview(); }, 350);
       if (window.showToast) window.showToast('Background removed — download or fine-tune it below.');
     } catch (e) {
       console.error(e);
       showError('Something went wrong: ' + (e.message || 'unknown error') + '. Please try another image.');
       hideProgress();
+      hideUploadedPreview();
     } finally {
       state.busy = false;
     }

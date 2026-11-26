@@ -13,6 +13,11 @@
 /* The editor takes over the homepage while a result is open. */
 body.result-open #heroSection,body.result-open .hm-section,body.result-open .hm-second,body.result-open .hm-rating,body.result-open .hm-footer{display:none}
 
+/* ---------- uploaded image shown while the AI works ---------- */
+.processing-preview,.up-processing-preview{display:block;max-width:min(100%,260px);max-height:170px;width:auto;height:auto;object-fit:contain;margin:0 auto;border-radius:12px;background:conic-gradient(#eef1f6 0 25%,#fff 0 50%,#eef1f6 0 75%,#fff 0) 0/12px 12px;box-shadow:0 6px 18px rgba(15,23,42,.1)}
+.processing-preview.hidden,.up-processing-preview.hidden{display:none}
+.up-processing-preview{margin-bottom:4px}
+
 /* ---------- floating pill toolbar ---------- */
 .studio-bar{position:sticky;top:10px;z-index:30;display:flex;align-items:center;gap:8px;max-width:1050px;margin:0 auto 18px;padding:7px 9px;background:rgba(255,255,255,.94);border:1px solid #e3e9f2;border-radius:999px;box-shadow:0 12px 34px rgba(15,23,42,.1);backdrop-filter:blur(14px)}
 .studio-tabs{display:flex;align-items:center;gap:2px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}

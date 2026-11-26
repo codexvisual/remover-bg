@@ -49,7 +49,8 @@ and download are all functional.
 
 ## Post-removal editor
 
-Upload first, then the result opens in a remove.bg-style studio: a floating
+Your uploaded picture appears immediately while the AI works; when it is
+ready the result opens in a remove.bg-style studio: a floating
 pill toolbar (Cutout / Background / Effects / Adjust / Design + rotate, flip,
 undo, redo and a blue Download button), one large **Before & after** preview
 with **Original** on the left and **Background removed** on the right, a

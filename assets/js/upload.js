@@ -27,6 +27,25 @@
     if (text) $('processingText').textContent = text;
   }
 
+  /* The uploaded picture is visible straight away, before the cut-out is ready. */
+  function showUploadedPreview(file) {
+    var p = $('processingPreview');
+    if (!p) return;
+    if (p.dataset.url) URL.revokeObjectURL(p.dataset.url);
+    var url = URL.createObjectURL(file);
+    p.dataset.url = url;
+    p.src = url;
+    p.classList.remove('hidden');
+  }
+
+  function hideUploadedPreview() {
+    var p = $('processingPreview');
+    if (!p) return;
+    p.classList.add('hidden');
+    if (p.dataset.url) { URL.revokeObjectURL(p.dataset.url); delete p.dataset.url; }
+    p.removeAttribute('src');
+  }
+
   function toPngFile(file) {
     return new Promise(function (resolve, reject) {
       var url = URL.createObjectURL(file);
@@ -77,6 +96,7 @@
     if (file.size > (Number(CFG.maxFileSizeMB) || 15) * 1024 * 1024) { error('Image is larger than ' + CFG.maxFileSizeMB + ' MB.'); return; }
     state.busy = true;
     setViewProcessing();
+    showUploadedPreview(file);
     try {
       if (/svg/.test(file.type)) file = await toPngFile(file);
 
@@ -119,9 +139,11 @@
       });
       setProgress(100, 'Ready!');
       show(result);
+      hideUploadedPreview();
       if (window.EditorAPI && window.EditorAPI.refresh) window.EditorAPI.refresh();
     } catch (e) {
       console.error(e);
+      hideUploadedPreview();
       show(idle);
       error('Background removal failed: ' + (e.message || 'please try another image.'));
     } finally {
@@ -131,6 +153,7 @@
 
   function reset() {
     state.file = null; state.cutout = null; state.originalCanvas = null;
+    hideUploadedPreview();
     if (previewUrl) { URL.revokeObjectURL(previewUrl); previewUrl = null; }
     if (fileInput) fileInput.value = '';
     error('');
