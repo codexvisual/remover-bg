@@ -1,5 +1,5 @@
 /* Upload page — faithful remove.bg/upload layout, Filofa branding */
-.up-page{min-height:calc(100vh - var(--header-h));display:flex;flex-direction:column;background:#fff}
+.up-page{min-height:calc(100vh - var(--header-h));display:flex;flex-direction:column;background:#fff;color:#454545;font-family:Poppins,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif}
 .up-notice{background:#dbe9ff;color:#1e3a5f;padding:12px 26px;font-size:14px;line-height:1.5}
 .up-notice a{color:#2563FF;text-decoration:underline;text-underline-offset:2px}
 .up-main{flex:1;display:grid;place-items:center;padding:56px 20px 90px;text-align:center;position:relative;transition:background .2s}
@@ -7,8 +7,8 @@
 .up-center{width:100%;max-width:540px;margin:0 auto;position:relative}
 .up-plus{position:absolute;right:58px;top:-52px;color:#f5a623;font-size:46px;line-height:1;font-weight:400;user-select:none}
 .up-title{font-size:34px;font-weight:800;line-height:1.26;color:#374151;letter-spacing:-.025em;margin:0 0 28px}
-.up-btn{border:0;border-radius:999px;background:#2563FF;color:#fff;padding:14px 30px;font-size:17px;font-weight:700;box-shadow:0 4px 12px rgba(37,99,255,.25);transition:.18s;font-family:inherit}
-.up-btn:hover{background:#1D4ED8;transform:translateY(-1px);box-shadow:0 6px 16px rgba(37,99,255,.32)}
+.up-btn{border:0;border-radius:99px;background:#0F70E6;color:#fff;padding:14px 30px;font-size:17px;font-weight:700;box-shadow:0 4px 12px rgba(15,112,230,.22);transition:.18s;font-family:inherit}
+.up-btn:hover{background:#0A5BC0;transform:translateY(-1px);box-shadow:0 6px 16px rgba(15,112,230,.3)}
 .up-btn:disabled{opacity:.6;cursor:wait;transform:none}
 .up-drop-label{margin:26px 0 0;font-size:16px;font-weight:700;color:#4b5563}
 .up-url-line{font-size:13px;color:#6b7280;margin:10px 0 0}

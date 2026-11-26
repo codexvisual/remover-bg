@@ -120,4 +120,11 @@
       link.classList.add('active');
     }
   });
+
+  /* Cache AI assets locally so repeat removals are near-instant. */
+  if ('serviceWorker' in navigator && location.protocol !== 'file:') {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
 })();

@@ -73,14 +73,33 @@
       .then(function (blob) { onProgress(90, 'Finishing up…'); return blob; });
   }
 
+  /* Feed the model a downscaled copy — much faster inference with almost
+     no visible loss for web use. Full-resolution input is still used for
+     the offline quick mode and for server-side processing. */
+  function optimizeForAI(file, maxEdge) {
+    return fileToImage(file).then(function (img) {
+      var size = scaledSize(img, maxEdge || 1280);
+      if (size.w === img.naturalWidth && size.h === img.naturalHeight) return file;
+      var c = makeCanvas(size.w, size.h);
+      c.getContext('2d').drawImage(img, 0, 0, size.w, size.h);
+      return new Promise(function (resolve) {
+        c.toBlob(function (blob) { resolve(blob || file); }, 'image/png');
+      });
+    }).catch(function () { return file; });
+  }
+
   async function clientRemove(file, onProgress) {
     onProgress(10, 'Loading AI model…');
     var mod = await import(/* @vite-ignore */ CFG.clientModel || 'https://esm.sh/@imgly/background-removal');
     var removeFn = mod.removeBackground || mod.remove || (mod.default && (mod.default.removeBackground || mod.default.remove));
     if (!removeFn) throw new Error('AI module could not be loaded.');
+    onProgress(20, 'Optimising image…');
+    var input = await optimizeForAI(file, 1280);
     onProgress(26, 'Analysing image…');
-    var output = await removeFn(file, {
+    var output = await removeFn(input, {
       model: 'isnet_quint8',
+      device: 'gpu',
+      proxyToWorker: true,
       output: { format: 'image/png', quality: 1 },
       progress: function (key, current, total) {
         var pct = 26;
