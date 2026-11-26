@@ -3,12 +3,39 @@
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Free image tools — Remover bg</title>
-<meta name="description" content="Free browser-based image tools: resize images, convert formats and lay out passport photos.">
+<meta name="description" content="Nine free browser-based image tools: background remover, resizer, converter, compressor, cropper, rotate/flip, effects, watermark and passport photo maker.">
 <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="assets/css/style.css">
-<style>.tool-output{display:flex;flex-direction:column;align-items:center;gap:10px;min-height:180px}.tool-inline{display:flex;gap:12px;align-items:end;flex-wrap:wrap}.tool-inline .field{flex:1;min-width:130px;margin:0}</style>
+<style>
+.tool-card{cursor:pointer;user-select:none;transition:.18s}
+.tool-card:hover{transform:translateY(-3px);border-color:#bfd2ff}
+.tool-card.active{border:2px solid var(--blue);box-shadow:0 8px 24px rgba(37,99,255,.14)}
+.tool-card .card-icon{margin-bottom:14px}
+.tool-card h3{font-size:1.02rem;margin-bottom:6px}
+.tool-card p{font-size:.86rem}
+.workspace-head{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:20px 24px;border-bottom:1px solid var(--line)}
+.workspace-head .badge{background:var(--blue-light);color:var(--blue);border-radius:8px;padding:6px 12px;font-size:.74rem;font-weight:800;letter-spacing:.05em}
+.workspace-body{padding:24px}
+.tool-fields{display:flex;gap:16px;flex-wrap:wrap;align-items:end;margin-bottom:20px}
+.tool-fields .field{min-width:150px;flex:1;margin:0}
+.tool-fields .field.check{flex:0 0 auto;min-width:0}
+.tool-fields .field.check label{display:flex;align-items:center;gap:8px;margin:0}
+.tool-fields .field.check input{width:auto}
+.tool-drop{padding:30px 20px;text-align:center;border:2px dashed #c9d7f5;border-radius:14px;background:#fbfdff;transition:.2s;cursor:pointer}
+.tool-drop.drag{border-color:var(--blue);background:var(--blue-lighter)}
+.tool-drop .drop-icon{width:52px;height:52px;margin:0 auto 12px}
+.tool-drop p{margin:0;font-size:.9rem;color:var(--muted)}
+.tool-preview{margin-top:20px;border:1px solid var(--line);border-radius:14px;min-height:230px;display:grid;place-items:center;padding:20px;background:#fff;background-image:linear-gradient(45deg,#eef1f6 25%,transparent 25%),linear-gradient(-45deg,#eef1f6 25%,transparent 25%),linear-gradient(45deg,transparent 75%,#eef1f6 75%),linear-gradient(-45deg,transparent 75%,#eef1f6 75%);background-size:20px 20px;background-position:0 0,0 10px,10px -10px,-10px 0}
+.tool-preview img{max-width:100%;max-height:420px;border-radius:8px;box-shadow:var(--shadow)}
+.tool-preview .placeholder{color:var(--muted);font-size:.9rem;text-align:center}
+.tool-actions{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:20px}
+.tool-status{margin:14px 0 0;font-size:.86rem;color:var(--muted);min-height:22px}
+.tool-progress{position:fixed;inset:0;z-index:200;background:rgba(15,23,42,.55);backdrop-filter:blur(4px);display:grid;place-items:center;padding:20px}
+.tool-progress .card{text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;min-width:min(340px,100%)}
+@media(max-width:640px){.tool-fields .field{min-width:100%}}
+</style>
 </head>
 <body>
-<div class="announce">🎉 New: generate custom AI backgrounds in one click — no prompt needed. <a href="features.html#generator">See how it works</a><button class="announce-close" aria-label="Dismiss">×</button></div>
+<div class="announce">🎉 Filofa Technology toolkit — 9 tools, sab browser me. <a href="features.html">Features dekhein</a><button class="announce-close" aria-label="Dismiss">×</button></div>
 <header class="site-header"><div class="container header-inner">
   <a href="index.html" class="logo"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a>
   <nav class="main-nav"><a href="features.html">Features</a><a href="use-cases.html">Use cases</a><a href="tools.html">Tools</a><a href="pricing.html">Pricing</a><a href="api.html">API</a><a href="blog.html">Blog</a></nav>
@@ -16,57 +43,41 @@
 </div></header>
 
 <section class="page-hero"><div class="container">
-  <div class="breadcrumb"><a href="index.html">Home</a> / Tools</div><span class="eyebrow">Free tools</span>
-  <h1>Small image tools that just work</h1><p>Resize, convert and format photos right in your browser. No uploads to a server, no watermarks.</p>
+  <div class="breadcrumb"><a href="index.html">Home</a> / Tools</div><span class="eyebrow">Free toolkit</span>
+  <h1>9 tools. One workspace. Zero uploads.</h1><p>Sab kuch aapke browser me chalta hai — images kisi server par nahi jaati. Tool chuno, image daalo, process karo aur download karo.</p>
 </div></section>
 
 <section class="section"><div class="container">
-  <div class="grid grid-3" style="margin-bottom:46px">
-    <div class="card reveal"><div class="card-icon"><svg><use href="#i-crop"/></svg></div><h3>Image resizer</h3><p>Change dimensions while keeping proportions.</p></div>
-    <div class="card reveal"><div class="card-icon"><svg><use href="#i-layers"/></svg></div><h3>Format converter</h3><p>Switch between PNG, JPG and WebP.</p></div>
-    <div class="card reveal"><div class="card-icon"><svg><use href="#i-camera"/></svg></div><h3>Passport photo maker</h3><p>Standard ID photo sizes on a clean backdrop.</p></div>
-  </div>
+  <div class="grid grid-3" id="toolGrid"></div>
 
-  <div class="card reveal" id="resizer" style="margin-bottom:26px">
-    <span class="eyebrow">Tool 01</span><h3>Image resizer</h3>
-    <p class="muted">Upload a photo, set an exact pixel size and download the result. Aspect ratio is locked by default.</p>
-    <div class="tool-inline" style="margin:20px 0">
-      <div class="field"><label>Choose image</label><input type="file" id="resizerInput" accept="image/*"></div>
-      <div class="field"><label>Width (px)</label><input type="number" id="resizerWidth" value="800"></div>
-      <div class="field"><label>Height (px)</label><input type="number" id="resizerHeight" value="600"></div>
-      <div class="field" style="flex:0 0 auto"><label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="resizerLock" checked style="width:auto"> Lock ratio</label></div>
-      <div class="field" style="flex:0 0 auto"><label>Output</label><select id="resizerType"><option value="png">PNG</option><option value="jpg">JPG</option></select></div>
-      <button class="btn btn-primary" id="resizerApply" type="button">Apply</button>
+  <div class="card" id="workspace" style="margin-top:34px">
+    <div class="workspace-head">
+      <span class="badge" id="toolBadge">TOOL</span>
+      <div style="margin-right:auto"><h3 id="toolTitle" style="margin:0">Tool</h3><p id="toolDesc" class="muted" style="margin:4px 0 0;font-size:.88rem"></p></div>
+      <button class="btn btn-sm btn-ghost" id="resetBtn" type="button"><svg class="inline-icon"><use href="#i-refresh"/></svg> Reset</button>
     </div>
-    <div class="tool-output" id="resizerPreview"><span class="muted">Preview appears here</span></div>
-    <button class="btn btn-outline" id="resizerDownload" type="button" style="margin-top:16px"><svg class="inline-icon"><use href="#i-download"/></svg> Download resized image</button>
-  </div>
-
-  <div class="card reveal" id="converter" style="margin-bottom:26px">
-    <span class="eyebrow">Tool 02</span><h3>Format converter</h3>
-    <p class="muted">Convert an image between PNG, JPG and WebP. Everything happens locally in your browser.</p>
-    <div class="tool-inline" style="margin:20px 0">
-      <div class="field"><label>Choose image</label><input type="file" id="converterInput" accept="image/*"></div>
-      <div class="field"><label>Convert to</label><select id="converterFormat"><option value="png">PNG</option><option value="jpeg">JPG</option><option value="webp">WebP</option></select></div>
-      <button class="btn btn-primary" id="converterApply" type="button">Convert</button>
+    <div class="workspace-body">
+      <div class="tool-fields" id="toolFields"></div>
+      <div class="tool-drop" id="toolDrop" role="button" tabindex="0">
+        <div class="drop-icon"><svg><use href="#i-upload"/></svg></div>
+        <p><strong>Click to choose an image</strong> or drag &amp; drop here · JPG, PNG, WebP, BMP · max 15 MB</p>
+      </div>
+      <input type="file" id="toolFile" accept="image/png,image/jpeg,image/webp,image/bmp" class="hidden">
+      <div class="tool-preview" id="previewBox"><span class="placeholder">Preview yahin dikhega</span></div>
+      <div class="tool-actions">
+        <button class="btn btn-primary" id="processBtn" type="button" disabled><svg class="inline-icon"><use href="#i-spark"/></svg> Process image</button>
+        <button class="btn btn-outline" id="downloadBtn" type="button" disabled><svg class="inline-icon"><use href="#i-download"/></svg> Download</button>
+        <span class="form-note" id="fileInfo"></span>
+      </div>
+      <p class="tool-status" id="toolStatus"></p>
     </div>
-    <div class="tool-output" id="converterPreview"><span class="muted">Preview appears here</span></div>
-    <button class="btn btn-outline" id="converterDownload" type="button" style="margin-top:16px"><svg class="inline-icon"><use href="#i-download"/></svg> Download converted image</button>
-  </div>
-
-  <div class="card reveal" id="passport">
-    <span class="eyebrow">Tool 03</span><h3>Passport photo maker</h3>
-    <p class="muted">Crop and centre a portrait into a standard ID photo size. Tip: remove the background on the <a href="index.html" style="color:var(--blue);font-weight:700">home page</a> first for the cleanest result.</p>
-    <div class="tool-inline" style="margin:20px 0">
-      <div class="field"><label>Choose photo</label><input type="file" id="passportInput" accept="image/*"></div>
-      <div class="field"><label>Photo size</label><select id="passportSize"><option value="35x45">35 × 45 mm (standard)</option><option value="40x50">40 × 50 mm</option><option value="50x50">50 × 50 mm</option><option value="25x35">25 × 35 mm</option></select></div>
-      <div class="field"><label>Background</label><select id="passportBg"><option value="#ffffff">White</option><option value="#d9e2f0">Light grey</option><option value="#e9f1ff">Light blue</option></select></div>
-      <button class="btn btn-primary" id="passportApply" type="button">Update</button>
-    </div>
-    <div class="tool-output" id="passportPreview"><span class="muted">Preview appears here</span></div>
-    <button class="btn btn-outline" id="passportDownload" type="button" style="margin-top:16px"><svg class="inline-icon"><use href="#i-download"/></svg> Download passport photo</button>
   </div>
 </div></section>
+
+<div class="tool-progress hidden" id="toolProgress"><div class="card">
+  <div class="spinner"></div><strong id="progressText">Processing…</strong>
+  <div class="progress-track" style="width:100%"><i id="progressBar"></i></div>
+</div></div>
 
 <footer class="site-footer"><div class="container">
   <div class="footer-grid">
@@ -78,5 +89,9 @@
   </div>
   <div class="footer-bottom"><p>© 2026 Remover bg — a Filofa Technology product.</p><div class="footer-legal"><a href="privacy.html">Privacy Policy</a><a href="terms.html">Terms of Service</a><a href="cookies.html">Cookie Policy</a></div></div>
 </div></footer>
-<script src="assets/js/icons.js"></script><script src="assets/js/site.js"></script><script src="assets/js/tools.js"></script>
+<script src="assets/js/config.js"></script>
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/background.js"></script>
+<script src="assets/js/tools.js"></script>
 </body></html>

@@ -135,10 +135,11 @@
   async function clientRemove(file, onProgress) {
     onProgress(10, 'Loading AI model…');
     var mod = await import(/* @vite-ignore */ CFG.clientModel || 'https://esm.sh/@imgly/background-removal');
-    var removeFn = mod.remove || (mod.default && mod.default.remove);
+    var removeFn = mod.removeBackground || mod.remove || (mod.default && (mod.default.removeBackground || mod.default.remove));
     if (!removeFn) throw new Error('AI module could not be loaded.');
     onProgress(28, 'Analysing image…');
     var result = await removeFn(file, {
+      model: 'isnet_quint8',
       output: { format: 'image/png', quality: 1 },
       progress: function (key, current, total) {
         var pct = 28;
@@ -236,6 +237,9 @@
   }
 
   async function removeBackground(file, onProgress) {
+    if (window.BackgroundEngine && window.BackgroundEngine.remove) {
+      return window.BackgroundEngine.remove(file, onProgress);
+    }
     var provider = CFG.provider || 'auto';
     if (provider === 'server' || (provider === 'auto' && CFG.apiEndpoint)) {
       try {

@@ -52,7 +52,7 @@
       </h1>
       <p class="hero-sub">Upload a picture and let AI cut out the subject for you. Perfect for product photos, profile pictures and designs — no editing skills needed.</p>
 
-      <div class="uploader-wrap">
+      <div class="uploader-wrap" id="uploadView">
         <div class="upload-tabs">
           <button class="upload-tab active" id="tabFile" type="button"><svg class="inline-icon"><use href="#i-upload"/></svg> Upload image</button>
           <button class="upload-tab" id="tabUrl" type="button"><svg class="inline-icon"><use href="#i-link"/></svg> Paste image URL</button>
@@ -120,7 +120,7 @@
       <p class="muted">Fine-tune edges, change the backdrop and download when you're happy.</p>
     </div>
 
-    <div class="result-panel" id="resultView">
+    <div class="result-panel hidden" id="resultView">
       <div class="result-head">
         <div><strong id="resultName">image-removed.png</strong></div>
         <span class="pill">✓ 100% transparent</span>
@@ -419,6 +419,7 @@
 <script src="assets/js/config.js"></script>
 <script src="assets/js/icons.js"></script>
 <script src="assets/js/site.js"></script>
+<script src="assets/js/background.js"></script>
 <script src="assets/js/remove.js"></script>
 </body>
 </html>

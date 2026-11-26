@@ -38,6 +38,22 @@ The Filofa Technology brand kit (logo, colours, typography, social assets and
 guidelines) lives in `C:\Users\Rahat\Desktop\Filofa Branding`.
 This site uses the Filofa gradient and mark throughout.
 
+## Tools (tools.html)
+
+All nine tools run locally in the browser and were verified end-to-end:
+
+1. Background Remover (AI, with offline quick-mode fallback)
+2. Image Resizer
+3. Format Converter (PNG / JPG / WebP)
+4. Image Compressor (with before/after size comparison)
+5. Image Cropper (numeric crop + aspect presets)
+6. Rotate & Flip
+7. Photo Effects (grayscale, sepia, brightness, contrast, saturation)
+8. Watermark Maker
+9. Passport Photo Maker (standard ID sizes, optional AI background removal)
+
+Drag & drop, clipboard paste, live preview and download are supported for every tool.
+
 ## Pages
 
 `index.html`, `features.html`, `use-cases.html`, `tools.html`, `pricing.html`,
