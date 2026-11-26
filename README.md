@@ -47,6 +47,15 @@ it" gallery, second upload area, blog, newsletter, rating and dark footer.
 Upload, drag-drop, paste, URL, sample images, AI removal, Magic Brush editing
 and download are all functional.
 
+## Performance
+
+- Service worker (`sw.js`) caches the AI model, WASM runtime and static assets,
+  so repeat visits and repeat removals do not re-download the model.
+- AI input is downscaled to 1280 px before inference, cutting processing time
+  on large photos.
+- WebGPU is used when the browser supports it; WASM is the fallback.
+- Type and colour tokens (Poppins 600, `#454545`, `#0F70E6`) match remove.bg.
+
 ## Tools (tools.html)
 
 All nine tools run locally in the browser and were verified end-to-end:
