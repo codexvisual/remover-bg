@@ -307,6 +307,7 @@
     if (hero) hero.classList.add('hidden');
     var resultSection = $('resultSection');
     if (resultSection) resultSection.classList.remove('hidden');
+    document.body.classList.add('result-open');
     if (el.errorMessage) el.errorMessage.classList.add('hidden');
     el.resultView.scrollIntoView({ behavior: 'smooth', block: 'start' });
     if (window.EditorAPI && window.EditorAPI.refresh) window.EditorAPI.refresh();
@@ -320,6 +321,7 @@
     if (hero) hero.classList.remove('hidden');
     var resultSection = $('resultSection');
     if (resultSection) resultSection.classList.add('hidden');
+    document.body.classList.remove('result-open');
     if (el.fileInput) el.fileInput.value = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

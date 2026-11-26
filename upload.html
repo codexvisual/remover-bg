@@ -76,71 +76,57 @@
   </section>
 
   <!-- RESULT -->
-  <section class="up-result hidden" id="resultView" aria-labelledby="resultTitle">
-    <div class="up-result-head">
-      <h1 id="resultTitle">Done — background removed</h1>
-      <p>Fine-tune, pick a background, then download your image.</p>
-    </div>
-    <div class="up-compare">
-      <figure class="up-card" style="margin:0">
-        <div class="up-card-head">Original</div>
-        <div class="up-frame" style="background:#f3f5f9"><img id="originalPreview" alt="Original image"></div>
-      </figure>
-      <figure class="up-card" style="margin:0">
-        <div class="up-card-head">Background removed</div>
-        <div class="up-frame" id="resultFrame"><div class="canvas-wrap" id="canvasWrap"><div class="frame-bg" id="frameBg" aria-hidden="true"></div><canvas id="resultCanvas"></canvas><div class="crop-overlay hidden" id="cropOverlay"><div class="crop-box" id="cropBox"><span class="crop-handle nw" data-handle="nw"></span><span class="crop-handle ne" data-handle="ne"></span><span class="crop-handle sw" data-handle="sw"></span><span class="crop-handle se" data-handle="se"></span></div></div></div></div>
-      </figure>
-    </div>
-    <div class="up-tools">
-      <div class="up-swatches" role="group" aria-label="Background colour">
-        <button class="up-swatch transparent active" type="button" data-bg="transparent" title="Transparent" aria-label="Transparent"></button>
-        <button class="up-swatch" type="button" data-bg="white" style="background:#fff" title="White" aria-label="White"></button>
-        <button class="up-swatch" type="button" data-bg="black" style="background:#111827" title="Black" aria-label="Black"></button>
-        <input type="color" id="customColor" value="#2563FF" aria-label="Custom colour" style="width:32px;height:32px;border:0;padding:0;background:none;cursor:pointer">
-      </div>
-      <select id="downloadFormat" aria-label="Download format" style="padding:11px;border:1px solid var(--line);border-radius:10px;font-weight:700"><option value="png">PNG (transparent)</option><option value="jpg">JPG</option><option value="webp">WebP</option></select>
-      <label class="editor-label">Quality <input type="range" id="downloadQuality" min="40" max="100" value="92" style="width:90px"></label>
-      <button class="up-btn" id="downloadBtn" type="button">Download</button>
-      <button class="up-link" id="newImageBtn" type="button">Use another image</button>
-    </div>
+  <section class="up-result studio-shell hidden" id="resultView" aria-labelledby="resultTitle">
+    <h1 class="hidden" id="resultTitle">Done — background removed</h1>
+    <div class="studio">
 
-    <div class="up-editor">
-      <div style="margin-top:18px">
-        <p class="tool-label" style="margin-bottom:6px">Background templates</p>
-        <div class="editor-templates">
-          <button class="editor-template t1" type="button" data-template="linear-gradient(135deg,#dbe9ff,#f3e8ff)" title="Soft blue"></button>
-          <button class="editor-template t2" type="button" data-template="linear-gradient(135deg,#ffe6d5,#ffd1dc)" title="Warm"></button>
-          <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
-          <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
+<div class="studio-bar">
+  <div class="studio-tabs" role="tablist" aria-label="Editor tools">
+    <button class="studio-tab active" type="button" role="tab" data-tab="cutout" aria-selected="true"><svg class="inline-icon" aria-hidden="true"><use href="#i-brush"/></svg><span>Cutout</span></button>
+    <button class="studio-tab" type="button" role="tab" data-tab="background" aria-selected="false"><svg class="inline-icon" aria-hidden="true"><use href="#i-palette"/></svg><span>Background</span></button>
+    <button class="studio-tab" type="button" role="tab" data-tab="effects" aria-selected="false"><svg class="inline-icon" aria-hidden="true"><use href="#i-spark"/></svg><span>Effects</span></button>
+    <button class="studio-tab" type="button" role="tab" data-tab="adjust" aria-selected="false"><svg class="inline-icon" aria-hidden="true"><use href="#i-bolt"/></svg><span>Adjust</span></button>
+    <button class="studio-tab" type="button" role="tab" data-tab="design" aria-selected="false"><svg class="inline-icon" aria-hidden="true"><use href="#i-layers"/></svg><span>Design</span></button>
+  </div>
+  <div class="studio-bar-actions">
+    <span class="studio-sep" aria-hidden="true"></span>
+    <button class="studio-icon" type="button" data-edit="rotL" title="Rotate left (Shift+R)" aria-label="Rotate left"><svg class="flip-x" aria-hidden="true"><use href="#i-rotate"/></svg></button>
+    <button class="studio-icon" type="button" data-edit="rotR" title="Rotate right (R)" aria-label="Rotate right"><svg aria-hidden="true"><use href="#i-rotate"/></svg></button>
+    <button class="studio-icon" type="button" data-edit="flipH" title="Flip horizontally (F)" aria-label="Flip horizontally"><svg aria-hidden="true"><use href="#i-flip"/></svg></button>
+    <button class="studio-icon" type="button" id="edUndo" title="Undo (Ctrl+Z)" aria-label="Undo"><svg aria-hidden="true"><use href="#i-undo"/></svg></button>
+    <button class="studio-icon" type="button" id="edRedo" title="Redo (Ctrl+Shift+Z)" aria-label="Redo"><svg aria-hidden="true"><use href="#i-redo"/></svg></button>
+    <button class="studio-download" type="button" id="downloadBtn"><svg class="inline-icon" aria-hidden="true"><use href="#i-download"/></svg><span>Download</span><svg class="chev" aria-hidden="true"><use href="#i-chevron"/></svg></button>
+  </div>
+</div>
+
+<div class="studio-body">
+  <div class="studio-stage">
+    <div class="compare-head"><span class="compare-kicker">Before &amp; after</span><span class="compare-tip">Drag the middle line to compare</span></div>
+    <div class="compare-view" id="compareView">
+      <figure class="compare-side compare-before">
+        <figcaption><span class="compare-tag">Original</span></figcaption>
+        <div class="compare-media"><img id="originalPreview" alt="Original image"></div>
+      </figure>
+      <div class="compare-divider" id="compareDivider" role="separator" aria-label="Resize comparison panels" aria-orientation="vertical" tabindex="0"><span class="compare-grip" aria-hidden="true"></span></div>
+      <figure class="compare-side compare-after">
+        <figcaption><span class="compare-tag done"><svg class="inline-icon" aria-hidden="true"><use href="#i-check"/></svg>Background removed</span></figcaption>
+        <div class="compare-media">
+          <div class="canvas-frame studio-frame" id="resultFrame"><div class="canvas-wrap" id="canvasWrap"><div class="frame-bg" id="frameBg" aria-hidden="true"></div><canvas id="resultCanvas"></canvas><div class="crop-overlay hidden" id="cropOverlay"><div class="crop-box" id="cropBox"><span class="crop-handle nw" data-handle="nw"></span><span class="crop-handle ne" data-handle="ne"></span><span class="crop-handle sw" data-handle="sw"></span><span class="crop-handle se" data-handle="se"></span></div></div></div></div>
         </div>
-      </div>
-      <div class="editor-row" aria-label="Backdrop effects">
-        <label class="editor-label">BG blur <input type="range" id="edBgBlur" min="0" max="40" value="0" aria-label="Blur the original background"><output id="bgBlurOut">0</output></label>
-        <label class="editor-label">Shadow <input type="range" id="edShadow" min="0" max="100" value="0" aria-label="Add a soft shadow"><output id="shadowOut">0</output></label>
-        <button class="editor-btn" id="edBackdropReset" type="button">Reset backdrop</button>
-      </div>
-      <div class="editor-row" aria-label="Edit tools">
-        <button class="editor-btn" id="edUndo" type="button" title="Undo (Ctrl+Z)">↶ Undo</button>
-        <button class="editor-btn" id="edRedo" type="button" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
-        <button class="editor-btn" data-edit="rotL" type="button">⟲ Rotate</button>
-        <button class="editor-btn" data-edit="rotR" type="button">⟳ Rotate</button>
-        <button class="editor-btn" data-edit="flipH" type="button">⇋ Flip H</button>
-        <button class="editor-btn" data-edit="flipV" type="button">↕ Flip V</button>
-        <button class="editor-btn" data-edit="crop" type="button">Crop</button>
-        <button class="editor-btn" data-edit="resize" type="button">Resize</button>
-        <button class="editor-btn" data-edit="trim" type="button" title="Trim transparent edges (T)">Trim edges</button>
-        <button class="editor-btn" id="edCompare" type="button" title="Hold to see original">Compare</button>
-        <button class="editor-btn" id="edResetAll" type="button" title="Reset every edit">Reset all</button>
-        <span class="editor-info" id="edInfo"></span>
-      </div>
-      <p class="editor-hint">Shortcuts: <kbd>R</kbd> rotate · <kbd>F</kbd> flip · <kbd>C</kbd> crop · <kbd>T</kbd> trim · <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo</p>
-      <div class="editor-row" aria-label="Adjustments">
-        <label class="editor-label">Brightness <input type="range" id="edBright" min="50" max="150" value="100"></label>
-        <label class="editor-label">Contrast <input type="range" id="edContrast" min="50" max="150" value="100"></label>
-        <label class="editor-label">Saturation <input type="range" id="edSaturate" min="0" max="200" value="100"></label>
-        <label class="editor-label">Blur <input type="range" id="edBlur" min="0" max="8" value="0"></label>
-        <button class="editor-btn" id="edResetFilters" type="button">Reset adjustments</button>
-      </div>
+      </figure>
+    </div>
+    <div class="stage-bar">
+      <button class="stage-chip" type="button" id="edCompare" title="Hold to see the original"><svg class="inline-icon" aria-hidden="true"><use href="#i-compare"/></svg>Compare</button>
+      <button class="stage-chip" type="button" id="edResetAll" title="Reset every edit"><svg class="inline-icon" aria-hidden="true"><use href="#i-refresh"/></svg>Reset all</button>
+      <span class="stage-dim" id="edInfo">—</span>
+    </div>
+  </div>
+
+  <aside class="studio-panel" aria-label="Editing controls">
+    <h2 class="panel-title" id="panelTitle">Cutout</h2>
+    <p class="panel-copy" id="panelCopy">Clean up the cut-out, then choose a new background.</p>
+
+    <div class="ed-context">
       <div class="editor-row hidden" id="cropRow" aria-label="Crop">
         <span class="editor-label">X <input class="editor-num" id="cropX" type="number" min="0" value="0"></span>
         <span class="editor-label">Y <input class="editor-num" id="cropY" type="number" min="0" value="0"></span>
@@ -169,6 +155,156 @@
         <label class="editor-label"><input type="checkbox" id="resizeLock" checked style="width:auto"> Lock</label>
         <button class="editor-btn" id="resizeApply" type="button">Apply size</button>
       </div>
+    </div>
+
+    <div class="ed-pane" data-pane="cutout" role="tabpanel">
+      <div class="brush-bar" id="brushBar">
+        <label><svg class="inline-icon" aria-hidden="true"><use href="#i-brush"/></svg> Magic Brush</label>
+        <div class="brush-modes">
+          <button class="editor-btn active" type="button" id="brushRestore">Restore</button>
+          <button class="editor-btn" type="button" id="brushErase">Erase</button>
+        </div>
+        <label for="brushSize">Size</label>
+        <input type="range" id="brushSize" min="6" max="80" value="24" aria-label="Brush size">
+        <span id="brushValue">24 px</span>
+        <button class="panel-btn subtle" type="button" id="resetBrush"><svg aria-hidden="true"><use href="#i-refresh"/></svg> Reset</button>
+      </div>
+      <p class="design-note" style="margin-top:10px">Restore brings pixels back, Erase removes them. Works in real time.</p>
+      <div class="panel-actions">
+        <button class="panel-btn" type="button" data-edit="trim"><svg aria-hidden="true"><use href="#i-trim"/></svg> Trim edges</button>
+        <button class="panel-btn" type="button" data-edit="crop"><svg aria-hidden="true"><use href="#i-crop"/></svg> Crop</button>
+        <button class="panel-btn" type="button" data-edit="resize"><svg aria-hidden="true"><use href="#i-resize"/></svg> Resize</button>
+      </div>
+    </div>
+
+    <div class="ed-pane hidden" data-pane="background" role="tabpanel">
+      <p class="tool-label">Background colour</p>
+      <div class="bg-swatches">
+        <button class="up-swatch transparent active" type="button" data-bg="transparent" title="Transparent" aria-label="Transparent"></button>
+        <button class="up-swatch" type="button" data-bg="white" style="background:#fff" title="White" aria-label="White"></button>
+        <button class="up-swatch" type="button" data-bg="black" style="background:#111827" title="Black" aria-label="Black"></button>
+        <input type="color" id="customColor" value="#2563FF" style="width:34px;height:34px;border:0;background:none;padding:0;cursor:pointer" aria-label="Choose background colour">
+      </div>
+      <div class="bg-templates">
+        <p class="tool-label">Templates</p>
+        <div class="editor-templates">
+          <button class="editor-template t1" type="button" data-template="linear-gradient(135deg,#dbe9ff,#f3e8ff)" title="Soft blue"></button>
+          <button class="editor-template t2" type="button" data-template="linear-gradient(135deg,#ffe6d5,#ffd1dc)" title="Warm"></button>
+          <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
+          <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
+        </div>
+      </div>
+      <p class="design-note" style="margin-top:12px">Transparent keeps the checkerboard so you can paste the cut-out anywhere.</p>
+    </div>
+
+    <div class="ed-pane hidden" data-pane="effects" role="tabpanel">
+      <p class="tool-label">Quick looks</p>
+      <div class="ed-looks" role="group" aria-label="Backdrop looks">
+        <button class="ed-look active" type="button" data-look="clean"><span class="look-dot clean"></span>Clean</button>
+        <button class="ed-look" type="button" data-look="depth"><span class="look-dot depth"></span>Depth</button>
+        <button class="ed-look" type="button" data-look="studio"><span class="look-dot studio"></span>Studio</button>
+        <button class="ed-look" type="button" data-look="night"><span class="look-dot night"></span>Night</button>
+      </div>
+      <p class="tool-label" style="margin-top:16px">Fine tune</p>
+      <label class="ed-slider"><span>BG blur</span><input type="range" id="edBgBlur" min="0" max="40" value="0" aria-label="Blur the original background"><output id="bgBlurOut">0</output></label>
+      <label class="ed-slider"><span>Shadow</span><input type="range" id="edShadow" min="0" max="100" value="0" aria-label="Add a soft shadow"><output id="shadowOut">0</output></label>
+      <button class="panel-btn subtle" type="button" id="edBackdropReset">Reset effects</button>
+    </div>
+
+    <div class="ed-pane hidden" data-pane="adjust" role="tabpanel">
+      <button class="panel-btn wide" type="button" id="edAuto"><svg aria-hidden="true"><use href="#i-wand"/></svg> Auto enhance</button>
+      <p class="tool-label">Looks</p>
+      <div class="ed-presets" role="group" aria-label="Colour presets">
+        <button class="ed-preset active" type="button" data-preset="original">Original</button>
+        <button class="ed-preset" type="button" data-preset="vivid">Vivid</button>
+        <button class="ed-preset" type="button" data-preset="warm">Warm</button>
+        <button class="ed-preset" type="button" data-preset="cool">Cool</button>
+        <button class="ed-preset" type="button" data-preset="bw">B&amp;W</button>
+        <button class="ed-preset" type="button" data-preset="soft">Soft</button>
+      </div>
+      <div class="ed-sliders">
+        <label class="ed-slider"><span>Brightness</span><input type="range" id="edBright" min="50" max="150" value="100"><output id="edBrightOut">100%</output></label>
+        <label class="ed-slider"><span>Contrast</span><input type="range" id="edContrast" min="50" max="150" value="100"><output id="edContrastOut">100%</output></label>
+        <label class="ed-slider"><span>Saturation</span><input type="range" id="edSaturate" min="0" max="200" value="100"><output id="edSaturateOut">100%</output></label>
+        <label class="ed-slider"><span>Blur</span><input type="range" id="edBlur" min="0" max="8" value="0"><output id="edBlurOut">0px</output></label>
+      </div>
+      <button class="panel-btn subtle" type="button" id="edResetFilters">Reset adjustments</button>
+    </div>
+
+    <div class="ed-pane hidden" data-pane="design" role="tabpanel">
+      <div class="design-list">
+        <div class="design-item" data-design-item="text">
+          <span class="design-ic"><svg aria-hidden="true"><use href="#i-text"/></svg></span>
+          <span class="design-meta"><strong>Add text</strong><small>Name, headline or caption</small></span>
+          <button class="panel-pill" type="button" data-design="text">Open</button>
+        </div>
+        <div class="design-form hidden" id="textForm">
+          <input class="design-input" id="textInput" type="text" maxlength="60" placeholder="Type your text…">
+          <div class="design-row">
+            <input type="color" id="textColor" value="#0f172a" aria-label="Text colour">
+            <select id="textSize" aria-label="Text size"><option value="s">Small</option><option value="m" selected>Medium</option><option value="l">Large</option></select>
+            <select id="textWeight" aria-label="Text style"><option value="700" selected>Bold</option><option value="400">Regular</option></select>
+            <button class="panel-btn" type="button" id="textApply">Add text</button>
+          </div>
+        </div>
+
+        <div class="design-item" data-design-item="shape">
+          <span class="design-ic"><svg aria-hidden="true"><use href="#i-shape"/></svg></span>
+          <span class="design-meta"><strong>Add elements</strong><small>Circle, square, ring or star</small></span>
+          <button class="panel-pill" type="button" data-design="shape">Open</button>
+        </div>
+        <div class="design-form hidden" id="shapeForm">
+          <div class="design-row">
+            <button class="ed-preset" type="button" data-shape="circle">Circle</button>
+            <button class="ed-preset" type="button" data-shape="square">Square</button>
+            <button class="ed-preset" type="button" data-shape="ring">Ring</button>
+            <button class="ed-preset" type="button" data-shape="star">Star</button>
+            <input type="color" id="shapeColor" value="#2563FF" aria-label="Shape colour">
+          </div>
+          <p class="design-note">Elements are placed behind your subject.</p>
+        </div>
+
+        <div class="design-item" data-design-item="template">
+          <span class="design-ic"><svg aria-hidden="true"><use href="#i-palette"/></svg></span>
+          <span class="design-meta"><strong>Use a template</strong><small>Ready-made gradient backdrops</small></span>
+          <button class="panel-pill" type="button" data-design="template">Open</button>
+        </div>
+        <div class="design-form hidden" id="templateForm">
+          <div class="editor-templates design-templates">
+            <button class="editor-template t5" type="button" data-template="linear-gradient(135deg,#ffd6a5,#ff9a8b)" title="Sunset"></button>
+            <button class="editor-template t6" type="button" data-template="linear-gradient(135deg,#c8f7dc,#7dd3fc)" title="Mint"></button>
+            <button class="editor-template t7" type="button" data-template="linear-gradient(135deg,#fbcfe8,#c4b5fd)" title="Candy"></button>
+            <button class="editor-template t8" type="button" data-template="linear-gradient(135deg,#0f172a,#334155)" title="Midnight"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel-export">
+      <p class="tool-label">Download</p>
+      <div class="export-row">
+        <select id="downloadFormat" aria-label="Download format">
+          <option value="png">PNG · transparent</option>
+          <option value="jpg">JPG · flat</option>
+          <option value="webp">WebP · small</option>
+        </select>
+        <button class="panel-btn" type="button" id="edCopy" title="Copy transparent PNG"><svg aria-hidden="true"><use href="#i-copy"/></svg> Copy</button>
+      </div>
+      <label class="ed-slider" style="margin-top:4px"><span>Quality</span><input type="range" id="downloadQuality" min="40" max="100" value="92"><output id="qualityOut">92%</output></label>
+      <p class="export-file" id="resultName">image-removed.png</p>
+    </div>
+  </aside>
+</div>
+
+<p class="editor-hint">Shortcuts: <kbd>R</kbd> rotate · <kbd>F</kbd> flip · <kbd>C</kbd> crop · <kbd>E</kbd> resize · <kbd>T</kbd> trim · <kbd>Ctrl</kbd>+<kbd>Z</kbd> undo</p>
+
+<div class="studio-foot">
+  <div class="thumbs">
+    <button class="thumb" type="button" id="thumbOriginal" title="Hold to see the original in the result panel"><span class="thumb-img"><svg aria-hidden="true"><use href="#i-compare"/></svg></span><span>Original</span></button>
+    <button class="thumb active" type="button" id="thumbEdit" title="Show the edited image"><span class="thumb-img"><canvas id="thumbCanvas" width="46" height="46"></canvas></span><span>Edited</span></button>
+    <button class="thumb thumb-add" type="button" id="newImageBtn" title="Upload another image"><span class="thumb-img">+</span><span>New</span></button>
+  </div>
+</div>
     </div>
   </section>
 </main>

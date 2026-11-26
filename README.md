@@ -49,9 +49,16 @@ and download are all functional.
 
 ## Post-removal editor
 
-The home page result view includes a full editor that also drives the export,
-so downloads match exactly what is on screen:
+Upload first, then the result opens in a remove.bg-style studio: a floating
+pill toolbar (Cutout / Background / Effects / Adjust / Design + rotate, flip,
+undo, redo and a blue Download button), one large **Before & after** preview
+with **Original** on the left and **Background removed** on the right, a
+draggable divider between the two panels, a contextual tool panel and a bottom
+thumbnail strip. On phones the two panels stack vertically. The editor also
+drives the export, so downloads match exactly what is on screen:
 
+- Side-by-side original / result — drag the middle grip to give either side
+  more room; hold **Compare** to see the original inside the result panel
 - Undo / redo with a 40-step history (`Ctrl+Z`, `Ctrl+Shift+Z` / `Ctrl+Y`)
 - Rotate 90° either way, flip horizontally / vertically
 - Drag-to-crop overlay with corner handles, live X/Y/W/H fields and 1:1, 4:3,
@@ -62,7 +69,11 @@ so downloads match exactly what is on screen:
 - Brightness, contrast, saturation and blur with double-click / one-click reset
 - Backdrop blur (uses the original photo) and a soft drop shadow, shown live
   and baked into the downloaded file
-- Gradient background templates or solid / transparent backgrounds
+- Gradient background templates (eight) or solid / transparent backgrounds
+- Quick looks (Clean / Depth / Studio / Night), colour presets (Vivid, Warm,
+  Cool, B&W, Soft) and histogram-based Auto enhance
+- Add text and elements (circle, square, ring, star) behind the subject
+- Copy the transparent PNG straight to the clipboard
 - Compare against the original (hold with a mouse, tap to toggle on touch)
 - Reset backdrop and Reset all, plus live pixel dimensions
 - Export PNG, JPG or WebP with a quality slider
