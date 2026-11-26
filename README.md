@@ -58,17 +58,18 @@ and download are all functional.
 
 ## Tools (tools.html)
 
-All nine tools run locally in the browser and were verified end-to-end:
+All ten tools run locally in the browser and were verified end-to-end:
 
 1. Background Remover (AI, with offline quick-mode fallback)
-2. Image Resizer
-3. Format Converter (PNG / JPG / WebP)
-4. Image Compressor (with before/after size comparison)
-5. Image Cropper (numeric crop + aspect presets)
-6. Rotate & Flip
-7. Photo Effects (grayscale, sepia, brightness, contrast, saturation)
-8. Watermark Maker
-9. Passport Photo Maker (standard ID sizes, optional AI background removal)
+2. Bulk Background Remover (multiple images at once)
+3. Image Resizer
+4. Format Converter (PNG / JPG / WebP)
+5. Image Compressor (with before/after size comparison)
+6. Image Cropper (numeric crop + aspect presets)
+7. Rotate & Flip
+8. Photo Effects (grayscale, sepia, brightness, contrast, saturation)
+9. Watermark Maker
+10. Passport Photo Maker (standard ID sizes, optional AI background removal)
 
 Drag & drop, clipboard paste, live preview and download are supported for every tool.
 

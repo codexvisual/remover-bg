@@ -10,7 +10,7 @@
   if (!grid || !fieldsBox) return;
 
   var CFG = window.REMOVEBG_CONFIG || {};
-  var state = { key: 'remover', file: null, image: null, result: null, format: 'png', quality: 0.92, busy: false };
+  var state = { key: 'remover', file: null, image: null, result: null, format: 'png', quality: 0.92, busy: false, bulkFiles: [], bulkResults: [] };
 
   function v(id) { var e = $(id); return e ? e.value : ''; }
   function checked(id) { var e = $(id); return !!(e && e.checked); }
@@ -69,6 +69,14 @@
         ctx.drawImage(cut, 0, 0);
         setOutput(v('f_fmt'), 0.94);
       }
+    },
+
+    bulk: {
+      title: 'Bulk Background Remover', icon: 'i-layers', badge: 'BULK',
+      desc: 'Ek saath kai images upload karo aur sabke background hatao — ek click me sab download.',
+      fields: '<div class="field"><label>Background</label><select id="f_bg"><option value="transparent">Transparent (PNG)</option><option value="white">White</option><option value="black">Black</option></select></div>' +
+        '<p class="form-note" style="width:100%;margin:0">Multiple files select karo ya sabko yahin drop karo. Badi batch me kuch samay lag sakta hai.</p>',
+      run: async function () { return; }
     },
 
     resize: {
@@ -295,6 +303,11 @@
   function selectTool(key, scroll) {
     state.key = key;
     var tool = TOOLS[key];
+    fileInput.multiple = key === 'bulk';
+    state.bulkFiles = []; state.bulkResults = [];
+    if (processBtn.lastChild && processBtn.lastChild.nodeType === 3) {
+      processBtn.lastChild.textContent = key === 'bulk' ? ' Process images' : ' Process image';
+    }
     Array.prototype.forEach.call(grid.children, function (c) { c.classList.toggle('active', c.dataset.key === key); });
     $('toolBadge').textContent = tool.badge;
     $('toolTitle').textContent = tool.title;
@@ -329,7 +342,82 @@
     } catch (e) { toast(e.message || 'Could not load image.'); }
   }
 
+  /* ---------- bulk processing ---------- */
+  async function handleBulk(files) {
+    files = Array.prototype.slice.call(files || []);
+    if (!files.length) return;
+    var valid = files.filter(function (f) { return /^image\//.test(f.type) && f.size <= (Number(CFG.maxFileSizeMB) || 15) * 1024 * 1024; });
+    if (!valid.length) { toast('No valid images found.'); return; }
+    state.bulkFiles = valid;
+    state.bulkResults = [];
+    state.file = valid[0];
+    state.image = null;
+    state.result = null;
+    infoEl.textContent = valid.length + ' images selected · ' + bytes(valid.reduce(function (s, f) { return s + f.size; }, 0));
+    statusEl.textContent = valid.length + ' images ready. Click "Process images".';
+    previewBox.innerHTML = '<span class="placeholder">' + valid.length + ' images queued — results will appear here</span>';
+    processBtn.disabled = false;
+    downloadBtn.disabled = true;
+    processBtn.lastChild.textContent = ' Process images';
+  }
+
+  async function processBulk() {
+    var files = state.bulkFiles;
+    if (!files.length || state.busy) return;
+    state.busy = true;
+    processBtn.disabled = true; downloadBtn.disabled = true;
+    state.bulkResults = [];
+    previewBox.innerHTML = '';
+    var bg = v('f_bg') || 'transparent';
+    try {
+      for (var i = 0; i < files.length; i++) {
+        progress(Math.round((i / files.length) * 100), 'Processing ' + (i + 1) + ' of ' + files.length + '…');
+        var cut = await window.BackgroundEngine.remove(files[i], function (pct, text) {
+          progress(Math.round(((i + pct / 100) / files.length) * 100), text);
+        });
+        var out = window.BackgroundEngine.makeCanvas(cut.width, cut.height);
+        var ctx = out.getContext('2d');
+        if (bg !== 'transparent') {
+          ctx.fillStyle = bg === 'white' ? '#ffffff' : '#111827';
+          ctx.fillRect(0, 0, out.width, out.height);
+        }
+        ctx.drawImage(cut, 0, 0);
+        state.bulkResults.push({ canvas: out, name: (files[i].name || 'image').replace(/\.[^.]+$/, '') + '-removed.png' });
+      }
+      progress(100, 'Done!');
+      state.bulkResults.forEach(function (item) {
+        var wrap = document.createElement('div');
+        wrap.style.cssText = 'text-align:center;max-width:170px';
+        var im = document.createElement('img');
+        im.src = item.canvas.toDataURL('image/png');
+        im.style.cssText = 'width:150px;height:150px;object-fit:contain;border:1px solid #e5e9f0;border-radius:8px;background:#fff';
+        var label = document.createElement('div');
+        label.style.cssText = 'font-size:11px;color:#6b7280;margin-top:6px;word-break:break-all';
+        label.textContent = item.name;
+        wrap.appendChild(im); wrap.appendChild(label);
+        previewBox.appendChild(wrap);
+      });
+      previewBox.style.display = 'flex';
+      previewBox.style.flexWrap = 'wrap';
+      previewBox.style.gap = '12px';
+      downloadBtn.disabled = false;
+      statusEl.textContent = state.bulkResults.length + ' images processed. Click Download to save them all.';
+      toast('All images ready.');
+    } catch (e) {
+      console.error(e);
+      statusEl.textContent = 'Bulk failed at image ' + (state.bulkResults.length + 1) + ': ' + (e.message || 'unknown error');
+    } finally {
+      hideProgress();
+      state.busy = false;
+      processBtn.disabled = false;
+      previewBox.style.display = '';
+      previewBox.style.flexWrap = '';
+      previewBox.style.gap = '';
+    }
+  }
+
   async function processImage() {
+    if (state.key === 'bulk') return processBulk();
     if (!state.image || state.busy) return;
     state.busy = true;
     processBtn.disabled = true; downloadBtn.disabled = true;
@@ -359,6 +447,23 @@
   }
 
   function download() {
+    if (state.key === 'bulk') {
+      if (!state.bulkResults.length) return;
+      state.bulkResults.forEach(function (item, index) {
+        setTimeout(function () {
+          item.canvas.toBlob(function (blob) {
+            if (!blob) return;
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url; a.download = item.name;
+            document.body.appendChild(a); a.click(); a.remove();
+            setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
+          }, 'image/png');
+        }, index * 350);
+      });
+      toast(state.bulkResults.length + ' downloads started.');
+      return;
+    }
     if (!state.result) return;
     var ext = state.format === 'jpeg' ? 'jpg' : state.format;
     state.result.toBlob(function (blob) {
@@ -375,6 +480,7 @@
 
   function reset() {
     state.file = null; state.image = null; state.result = null;
+    state.bulkFiles = []; state.bulkResults = [];
     fileInput.value = '';
     previewBox.innerHTML = '<span class="placeholder">Preview yahin dikhega</span>';
     infoEl.textContent = ''; statusEl.textContent = '';
@@ -389,8 +495,15 @@
   drop.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
   ['dragenter', 'dragover'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.add('drag'); }); });
   ['dragleave', 'drop'].forEach(function (t) { drop.addEventListener(t, function (e) { e.preventDefault(); drop.classList.remove('drag'); }); });
-  drop.addEventListener('drop', function (e) { if (e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]); });
-  fileInput.addEventListener('change', function (e) { handleFile(e.target.files[0]); });
+  drop.addEventListener('drop', function (e) {
+    if (!e.dataTransfer.files.length) return;
+    if (state.key === 'bulk') handleBulk(e.dataTransfer.files);
+    else handleFile(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', function (e) {
+    if (state.key === 'bulk') handleBulk(e.target.files);
+    else handleFile(e.target.files[0]);
+  });
   document.addEventListener('paste', function (e) {
     if (state.busy) return;
     var items = e.clipboardData && e.clipboardData.items;
@@ -398,7 +511,12 @@
     for (var i = 0; i < items.length; i++) {
       if (items[i].type.indexOf('image/') === 0) {
         var f = items[i].getAsFile();
-        if (f) { e.preventDefault(); handleFile(f); break; }
+        if (f) {
+          e.preventDefault();
+          if (state.key === 'bulk') handleBulk(state.bulkFiles.concat([f]));
+          else handleFile(f);
+          break;
+        }
       }
     }
   });
