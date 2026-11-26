@@ -154,6 +154,88 @@
     if ($('edCompare')) $('edCompare').classList.remove('active');
   }
 
+  /* ---------- drag-to-crop ---------- */
+  var drag = null;
+
+  function clamp(v, min, max) { return Math.min(Math.max(v, min), max); }
+
+  function cropScale() {
+    var box = $('cropOverlay');
+    return { x: box.clientWidth / canvas.width, y: box.clientHeight / canvas.height };
+  }
+
+  function syncCropBox() {
+    var box = $('cropBox'), overlay = $('cropOverlay');
+    if (!box || !overlay || !canvas.width) return;
+    var s = cropScale();
+    var x = (Number($('cropX').value) || 0) * s.x;
+    var y = (Number($('cropY').value) || 0) * s.y;
+    var w = Math.max(20, (Number($('cropW').value) || canvas.width) * s.x);
+    var h = Math.max(20, (Number($('cropH').value) || canvas.height) * s.y);
+    box.style.left = clamp(x, 0, overlay.clientWidth - 20) + 'px';
+    box.style.top = clamp(y, 0, overlay.clientHeight - 20) + 'px';
+    box.style.width = clamp(w, 20, overlay.clientWidth) + 'px';
+    box.style.height = clamp(h, 20, overlay.clientHeight) + 'px';
+  }
+
+  function updateCropInputs() {
+    var box = $('cropBox'), overlay = $('cropOverlay');
+    if (!box || !overlay) return;
+    var s = cropScale();
+    $('cropX').value = Math.round(parseFloat(box.style.left) / s.x);
+    $('cropY').value = Math.round(parseFloat(box.style.top) / s.y);
+    $('cropW').value = Math.round(parseFloat(box.style.width) / s.x);
+    $('cropH').value = Math.round(parseFloat(box.style.height) / s.y);
+  }
+
+  function cropPointerDown(e) {
+    e.preventDefault(); e.stopPropagation();
+    var box = $('cropBox'), overlay = $('cropOverlay');
+    var handle = e.target.dataset.handle || 'move';
+    var r = box.getBoundingClientRect(), o = overlay.getBoundingClientRect();
+    drag = {
+      handle: handle,
+      sx: e.clientX, sy: e.clientY,
+      left: r.left - o.left, top: r.top - o.top,
+      w: r.width, h: r.height,
+      maxW: overlay.clientWidth, maxH: overlay.clientHeight
+    };
+    box.setPointerCapture(e.pointerId);
+  }
+
+  function cropPointerMove(e) {
+    if (!drag) return;
+    var dx = e.clientX - drag.sx, dy = e.clientY - drag.sy;
+    var left = drag.left, top = drag.top, right = drag.left + drag.w, bottom = drag.top + drag.h;
+    if (drag.handle === 'move') {
+      left = clamp(left + dx, 0, drag.maxW - drag.w);
+      right = left + drag.w;
+      top = clamp(top + dy, 0, drag.maxH - drag.h);
+      bottom = top + drag.h;
+    } else {
+      var h = drag.handle;
+      if (h.indexOf('w') >= 0) left = clamp(left + dx, 0, right - 24);
+      if (h.indexOf('e') >= 0) right = clamp(right + dx, left + 24, drag.maxW);
+      if (h.indexOf('n') >= 0) top = clamp(top + dy, 0, bottom - 24);
+      if (h.indexOf('s') >= 0) bottom = clamp(bottom + dy, top + 24, drag.maxH);
+    }
+    var box = $('cropBox');
+    box.style.left = left + 'px';
+    box.style.top = top + 'px';
+    box.style.width = (right - left) + 'px';
+    box.style.height = (bottom - top) + 'px';
+    updateCropInputs();
+  }
+
+  function cropPointerUp() { drag = null; }
+
+  function setCropActive(active) {
+    var overlay = $('cropOverlay');
+    if (!overlay) return;
+    overlay.classList.toggle('hidden', !active);
+    if (active) syncCropBox();
+  }
+
   function init() {
     canvas = $('resultCanvas');
     if (!canvas) return;
@@ -162,6 +244,7 @@
     var view = $('resultView');
     if (!view) return;
     var observer = new MutationObserver(function () {
+      if (view.classList.contains('hidden')) setCropActive(false);
       if (!view.classList.contains('hidden') && !ready && canvas.width > 1) {
         ready = true;
         observer.disconnect();
@@ -189,11 +272,15 @@
         if (action === 'crop') {
           var row = $('cropRow');
           row.classList.toggle('hidden');
-          $('cropX').value = 0; $('cropY').value = 0;
-          $('cropW').value = canvas.width; $('cropH').value = canvas.height;
+          $('cropX').value = Math.round(canvas.width * 0.15);
+          $('cropY').value = Math.round(canvas.height * 0.15);
+          $('cropW').value = Math.round(canvas.width * 0.7);
+          $('cropH').value = Math.round(canvas.height * 0.7);
           $('cropRatio').value = 'free';
+          setCropActive(!row.classList.contains('hidden'));
         }
         if (action === 'resize') {
+          setCropActive(false);
           var rrow = $('resizeRow');
           rrow.classList.toggle('hidden');
           $('resizeW').value = canvas.width; $('resizeH').value = canvas.height;
@@ -202,7 +289,19 @@
       });
     });
 
-    $('cropApply').addEventListener('click', crop);
+    $('cropApply').addEventListener('click', function () { crop(); setCropActive(false); });
+
+    var cropBox = $('cropBox'), cropOverlay = $('cropOverlay');
+    cropBox.addEventListener('pointerdown', cropPointerDown);
+    cropOverlay.addEventListener('pointermove', cropPointerMove);
+    cropOverlay.addEventListener('pointerup', cropPointerUp);
+    cropOverlay.addEventListener('pointercancel', cropPointerUp);
+    ['cropX', 'cropY', 'cropW', 'cropH'].forEach(function (id) {
+      $(id).addEventListener('change', function () { if (!cropOverlay.classList.contains('hidden')) syncCropBox(); });
+    });
+    window.addEventListener('resize', function () {
+      if (!cropOverlay.classList.contains('hidden')) syncCropBox();
+    });
 
     $('cropRatio').addEventListener('change', function () {
       var r = Number($('cropRatio').value);

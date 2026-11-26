@@ -44,14 +44,16 @@ self.addEventListener('fetch', event => {
       );
       return;
     }
+    // Code and assets: network first so new deploys are never stale.
     event.respondWith(
       caches.open(CACHE).then(async cache => {
-        const hit = await cache.match(req);
-        const net = fetch(req).then(res => {
+        try {
+          const res = await fetch(req);
           if (res && res.ok) cache.put(req, res.clone());
           return res;
-        }).catch(() => hit);
-        return hit || net;
+        } catch (e) {
+          return cache.match(req);
+        }
       })
     );
   }

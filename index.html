@@ -233,7 +233,7 @@
       <div class="progress hidden" id="progress"><div class="spinner"></div><div class="progress-text" id="progressText" style="font-weight:700;font-size:.9rem">Processing…</div><div class="progress-track"><i id="progressBar"></i></div></div>
       <div class="compare">
         <figure><figcaption>Original</figcaption><div class="canvas-frame" style="background:#eef2f8"><img id="originalPreview" alt="Original uploaded image"></div></figure>
-        <figure><figcaption>Background removed</figcaption><div class="canvas-frame" id="resultFrame"><canvas id="resultCanvas"></canvas></div></figure>
+        <figure><figcaption>Background removed</figcaption><div class="canvas-frame" id="resultFrame"><div class="canvas-wrap" id="canvasWrap"><canvas id="resultCanvas"></canvas><div class="crop-overlay hidden" id="cropOverlay"><div class="crop-box" id="cropBox"><span class="crop-handle nw" data-handle="nw"></span><span class="crop-handle ne" data-handle="ne"></span><span class="crop-handle sw" data-handle="sw"></span><span class="crop-handle se" data-handle="se"></span></div></div></div></div></figure>
       </div>
       <div class="result-tools">
         <p class="tool-label">Background</p>
@@ -243,6 +243,15 @@
           <button class="swatch" data-bg="black" style="background:#111827" title="Black" aria-label="Black"></button>
           <button class="swatch" data-bg="custom" style="background:linear-gradient(135deg,#ff5f6d,#ffc371)" title="Custom colour" aria-label="Custom colour"></button>
           <input type="color" id="customColor" value="#2563FF" style="width:38px;height:34px;border:0;background:none;padding:0" aria-label="Choose background colour">
+        </div>
+        <div style="margin-top:14px">
+          <p class="tool-label" style="margin-bottom:6px">Background templates</p>
+          <div class="editor-templates">
+            <button class="editor-template t1" type="button" data-template="linear-gradient(135deg,#dbe9ff,#f3e8ff)" title="Soft blue"></button>
+            <button class="editor-template t2" type="button" data-template="linear-gradient(135deg,#ffe6d5,#ffd1dc)" title="Warm"></button>
+            <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
+            <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
+          </div>
         </div>
         <div class="brush-bar" id="brushBar">
           <label><svg class="inline-icon"><use href="#i-brush"/></svg> Magic Brush:</label>
@@ -304,16 +313,6 @@
         <span class="editor-label">H <input class="editor-num" id="resizeH" type="number" min="1" value="600"></span>
         <label class="editor-label"><input type="checkbox" id="resizeLock" checked style="width:auto"> Lock</label>
         <button class="editor-btn" id="resizeApply" type="button">Apply size</button>
-      </div>
-
-      <div style="margin-top:12px">
-        <p class="tool-label" style="margin-bottom:6px">Background templates</p>
-        <div class="editor-templates">
-          <button class="editor-template t1" type="button" data-template="linear-gradient(135deg,#dbe9ff,#f3e8ff)" title="Soft blue"></button>
-          <button class="editor-template t2" type="button" data-template="linear-gradient(135deg,#ffe6d5,#ffd1dc)" title="Warm"></button>
-          <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
-          <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
-        </div>
       </div>
 
       <div class="result-actions">
