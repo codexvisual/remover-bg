@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Upload Image — Remover bg</title>
+<meta name="description" content="Upload an image to remove its background automatically with AI. Free, fast and no skills required.">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+<link rel="stylesheet" href="assets/css/upload.css">
+</head>
+<body class="up-page">
+
+<header class="site-header" style="position:static">
+  <div class="container header-inner">
+    <a href="index.html" class="logo" aria-label="Remover bg home"><span class="logo-mark"><svg><use href="#i-filofa"/></svg></span><span>Remover<b>.bg</b></span></a>
+    <nav class="main-nav">
+      <a href="upload.html" class="active">Uploads</a>
+      <a href="tools.html">Bulk Editing</a>
+      <a href="api.html">API</a>
+      <a href="tools.html">Plugins</a>
+      <a href="pricing.html">Pricing</a>
+    </nav>
+    <div class="header-actions">
+      <a href="contact.html" class="login">Log in</a>
+      <a href="pricing.html" class="btn btn-outline btn-sm" style="border-radius:999px;background:#f3f4f6;border-color:#e5e7eb">Sign up</a>
+      <button class="menu-toggle" aria-label="Open menu"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<div class="up-notice">
+  Remover bg's background removal is built by <a href="about.html">Filofa Technology</a>. Need automation? See our <a href="api.html">API</a> and <a href="tools.html">bulk tools</a> — no standalone download required.
+</div>
+
+<main class="up-main" id="mainArea">
+
+  <!-- IDLE -->
+  <section class="up-center" id="idleView" aria-labelledby="upTitle">
+    <span class="up-plus" aria-hidden="true">✚</span>
+    <h1 class="up-title" id="upTitle">Upload an image to<br>remove the background</h1>
+    <button class="up-btn" id="uploadBtn" type="button">Upload Image</button>
+    <p class="up-drop-label">or drop a file,</p>
+    <p class="up-url-line">paste image or <a id="urlToggle" role="button" tabindex="0">URL</a></p>
+    <div class="up-url-row hidden" id="urlRow">
+      <input type="url" id="urlInput" placeholder="https://example.com/photo.jpg" aria-label="Image URL">
+      <button class="up-btn" id="urlGo" type="button" style="font-size:14px;padding:10px 20px">Remove</button>
+    </div>
+
+    <div class="up-samples">
+      <div class="up-samples-title">No image? Try one of these:</div>
+      <div class="up-thumbs">
+        <button class="up-thumb" type="button" data-sample="assets/img/sample-1.svg" aria-label="Try portrait sample"><img src="assets/img/sample-1.svg" alt="Portrait sample"></button>
+        <button class="up-thumb" type="button" data-sample="assets/img/sample-2.svg" aria-label="Try plant sample"><img src="assets/img/sample-2.svg" alt="Plant sample"></button>
+        <button class="up-thumb" type="button" data-sample="assets/img/sample-3.svg" aria-label="Try car sample"><img src="assets/img/sample-3.svg" alt="Car sample"></button>
+        <button class="up-thumb" type="button" data-sample="assets/img/sample-4.svg" aria-label="Try interior sample"><img src="assets/img/sample-4.svg" alt="Interior sample"></button>
+      </div>
+    </div>
+
+    <p class="up-fine">By uploading an image or URL you agree to our <a href="terms.html">Terms of Service</a>. To learn more about how Remover bg handles your personal data, check our <a href="privacy.html">Privacy Policy</a>.</p>
+    <p class="up-error" id="errorMessage" role="alert" aria-live="polite"></p>
+  </section>
+
+  <!-- PROCESSING -->
+  <section class="up-processing hidden" id="processingView" aria-live="polite">
+    <div class="up-spinner"></div>
+    <h1 class="up-title" style="font-size:26px;margin-bottom:8px">Removing the background…</h1>
+    <p style="color:#6b7280;font-size:14px;margin:0" id="processingText">Preparing your image…</p>
+    <div class="up-progress-track"><i id="processingBar"></i></div>
+  </section>
+
+  <!-- RESULT -->
+  <section class="up-result hidden" id="resultView" aria-labelledby="resultTitle">
+    <div class="up-result-head">
+      <h1 id="resultTitle">Done — background removed</h1>
+      <p>Choose a background, then download your image.</p>
+    </div>
+    <div class="up-compare">
+      <figure class="up-card" style="margin:0">
+        <div class="up-card-head">Original</div>
+        <div class="up-frame" style="background:#f3f5f9"><img id="originalPreview" alt="Original image"></div>
+      </figure>
+      <figure class="up-card" style="margin:0">
+        <div class="up-card-head">Background removed</div>
+        <div class="up-frame" id="resultFrame"><canvas id="resultCanvas"></canvas></div>
+      </figure>
+    </div>
+    <div class="up-tools">
+      <div class="up-swatches" role="group" aria-label="Background colour">
+        <button class="up-swatch transparent active" type="button" data-bg="transparent" title="Transparent" aria-label="Transparent"></button>
+        <button class="up-swatch" type="button" data-bg="white" style="background:#fff" title="White" aria-label="White"></button>
+        <button class="up-swatch" type="button" data-bg="black" style="background:#111827" title="Black" aria-label="Black"></button>
+        <input type="color" id="customColor" value="#2563FF" aria-label="Custom colour" style="width:32px;height:32px;border:0;padding:0;background:none;cursor:pointer">
+      </div>
+      <button class="up-btn" id="downloadBtn" type="button">Download</button>
+      <button class="up-link" id="newImageBtn" type="button">Use another image</button>
+    </div>
+  </section>
+</main>
+
+<aside class="up-cookie" id="cookieBanner">
+  <p>By using Remover bg you agree to the use of cookies. You can find details on how we use cookies in our <a href="cookies.html" style="color:#166534;text-decoration:underline">Cookie Policy</a>.</p>
+  <button type="button" id="cookieClose">Close</button>
+</aside>
+
+<input type="file" id="fileInput" accept="image/png,image/jpeg,image/webp,image/bmp" class="hidden">
+
+<script src="assets/js/config.js"></script>
+<script src="assets/js/icons.js"></script>
+<script src="assets/js/site.js"></script>
+<script src="assets/js/background.js"></script>
+<script src="assets/js/upload.js"></script>
+</body>
+</html>

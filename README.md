@@ -56,6 +56,6 @@ Drag & drop, clipboard paste, live preview and download are supported for every 
 
 ## Pages
 
-`index.html`, `features.html`, `use-cases.html`, `tools.html`, `pricing.html`,
+`index.html`, `upload.html` (remove.bg/upload-style page), `features.html`, `use-cases.html`, `tools.html`, `pricing.html`,
 `api.html`, `faq.html`, `blog.html`, `about.html`, `contact.html`,
 `privacy.html`, `terms.html`, `cookies.html`.
