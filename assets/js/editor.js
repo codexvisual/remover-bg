@@ -83,6 +83,18 @@
     updateInfo();
   }
 
+  function resize() {
+    pushHistory();
+    var s = snapshot();
+    var w = Math.max(1, Number($('resizeW').value) || s.w);
+    var h = Math.max(1, Number($('resizeH').value) || s.h);
+    var src = canvasFrom(s);
+    canvas.width = w; canvas.height = h;
+    ctx.imageSmoothingQuality = 'high';
+    ctx.drawImage(src, 0, 0, w, h);
+    updateInfo();
+  }
+
   function sliderValue(id, fallback) {
     var e = $(id); return e ? Number(e.value) : fallback;
   }
@@ -179,11 +191,38 @@
           row.classList.toggle('hidden');
           $('cropX').value = 0; $('cropY').value = 0;
           $('cropW').value = canvas.width; $('cropH').value = canvas.height;
+          $('cropRatio').value = 'free';
+        }
+        if (action === 'resize') {
+          var rrow = $('resizeRow');
+          rrow.classList.toggle('hidden');
+          $('resizeW').value = canvas.width; $('resizeH').value = canvas.height;
+          $('resizePreset').value = 'custom';
         }
       });
     });
 
     $('cropApply').addEventListener('click', crop);
+
+    $('cropRatio').addEventListener('change', function () {
+      var r = Number($('cropRatio').value);
+      if (!r || !canvas) return;
+      var w = Number($('cropW').value) || canvas.width;
+      $('cropH').value = Math.max(1, Math.round(w / r));
+    });
+
+    $('resizeApply').addEventListener('click', resize);
+    $('resizePreset').addEventListener('change', function () {
+      var parts = $('resizePreset').value.split('x');
+      if (parts.length !== 2 || !Number(parts[0])) return;
+      $('resizeW').value = parts[0]; $('resizeH').value = parts[1];
+    });
+    $('resizeW').addEventListener('input', function () {
+      if ($('resizeLock').checked && canvas) $('resizeH').value = Math.round(Number($('resizeW').value) * canvas.height / canvas.width);
+    });
+    $('resizeH').addEventListener('input', function () {
+      if ($('resizeLock').checked && canvas) $('resizeW').value = Math.round(Number($('resizeH').value) * canvas.width / canvas.height);
+    });
 
     var sliders = ['edBright', 'edContrast', 'edSaturate', 'edBlur'];
     sliders.forEach(function (id) {

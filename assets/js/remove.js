@@ -407,7 +407,7 @@
     var format = (el.downloadFormat && el.downloadFormat.value) || 'png';
     var out = makeCanvas(state.resultCanvas.width, state.resultCanvas.height);
     var ctx = out.getContext('2d');
-    if (format === 'png' && state.bg === 'transparent' && !window.__editorGradient) {
+    if (format !== 'jpg' && state.bg === 'transparent' && !window.__editorGradient) {
       ctx.drawImage(state.resultCanvas, 0, 0);
     } else {
       if (window.__editorGradient) {
@@ -429,13 +429,16 @@
       }
       ctx.drawImage(state.resultCanvas, 0, 0);
     }
-    return { canvas: out, type: format === 'jpg' ? 'image/jpeg' : 'image/png', ext: format === 'jpg' ? 'jpg' : 'png' };
+    var type = format === 'jpg' ? 'image/jpeg' : format === 'webp' ? 'image/webp' : 'image/png';
+    return { canvas: out, type: type, ext: format };
   }
 
   function download() {
     if (!state.resultCanvas) return;
     var out = exportCanvas();
     var name = (el.resultName ? el.resultName.textContent : 'image-removed').replace(/\.png$/, '') + '.' + out.ext;
+    var qualityEl = $('downloadQuality');
+    var quality = qualityEl ? Number(qualityEl.value) / 100 : 0.92;
     out.canvas.toBlob(function (blob) {
       if (!blob) { showError('Download failed. Please try again.'); return; }
       var url = URL.createObjectURL(blob);
@@ -444,7 +447,7 @@
       document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { URL.revokeObjectURL(url); }, 4000);
       if (window.showToast) window.showToast('Saved as ' + name);
-    }, out.type, 0.94);
+    }, out.type, quality);
   }
 
   /* ================= wire up UI ================= */

@@ -16,10 +16,11 @@
 
   function fileToImage(file) {
     return new Promise(function (resolve, reject) {
-      var reader = new FileReader();
-      reader.onload = function () { loadImage(reader.result).then(resolve, reject); };
-      reader.onerror = function () { reject(new Error('Could not read the file.')); };
-      reader.readAsDataURL(file);
+      var url = URL.createObjectURL(file);
+      var img = new Image();
+      img.onload = function () { URL.revokeObjectURL(url); resolve(img); };
+      img.onerror = function () { URL.revokeObjectURL(url); reject(new Error('Could not read the file.')); };
+      img.src = url;
     });
   }
 

@@ -263,6 +263,7 @@
         <button class="editor-btn" data-edit="flipH" type="button">⇋ Flip H</button>
         <button class="editor-btn" data-edit="flipV" type="button">↕ Flip V</button>
         <button class="editor-btn" data-edit="crop" type="button">Crop</button>
+        <button class="editor-btn" data-edit="resize" type="button">Resize</button>
         <button class="editor-btn" id="edCompare" type="button" title="Hold to see original">Compare</button>
         <span class="editor-info" id="edInfo"></span>
       </div>
@@ -280,7 +281,29 @@
         <span class="editor-label">Y <input class="editor-num" id="cropY" type="number" min="0" value="0"></span>
         <span class="editor-label">W <input class="editor-num" id="cropW" type="number" min="1" value="100"></span>
         <span class="editor-label">H <input class="editor-num" id="cropH" type="number" min="1" value="100"></span>
+        <label class="editor-label">Ratio
+          <select class="editor-num" id="cropRatio" style="width:100px">
+            <option value="free">Free</option><option value="1">1 : 1</option><option value="1.333">4 : 3</option><option value="1.777">16 : 9</option><option value="0.75">3 : 4</option>
+          </select>
+        </label>
         <button class="editor-btn" id="cropApply" type="button">Apply crop</button>
+      </div>
+
+      <div class="editor-row hidden" id="resizeRow" aria-label="Resize">
+        <label class="editor-label">Preset
+          <select class="editor-num" id="resizePreset" style="width:150px">
+            <option value="custom">Custom</option>
+            <option value="1080x1080">Instagram 1080 × 1080</option>
+            <option value="1200x628">LinkedIn 1200 × 628</option>
+            <option value="1920x1080">HD 1920 × 1080</option>
+            <option value="800x800">Square 800 × 800</option>
+            <option value="420x540">Passport 420 × 540</option>
+          </select>
+        </label>
+        <span class="editor-label">W <input class="editor-num" id="resizeW" type="number" min="1" value="800"></span>
+        <span class="editor-label">H <input class="editor-num" id="resizeH" type="number" min="1" value="600"></span>
+        <label class="editor-label"><input type="checkbox" id="resizeLock" checked style="width:auto"> Lock</label>
+        <button class="editor-btn" id="resizeApply" type="button">Apply size</button>
       </div>
 
       <div style="margin-top:12px">
@@ -295,7 +318,8 @@
 
       <div class="result-actions">
         <button class="btn btn-primary btn-lg" id="downloadBtn" type="button"><svg class="inline-icon"><use href="#i-download"/></svg> Download image</button>
-        <select id="downloadFormat" aria-label="Download format" style="padding:12px;border:1px solid var(--line);border-radius:10px;font-weight:700"><option value="png">PNG (transparent)</option><option value="jpg">JPG (flat background)</option></select>
+        <select id="downloadFormat" aria-label="Download format" style="padding:12px;border:1px solid var(--line);border-radius:10px;font-weight:700"><option value="png">PNG (transparent)</option><option value="jpg">JPG (flat background)</option><option value="webp">WebP</option></select>
+        <label class="editor-label">Quality <input type="range" id="downloadQuality" min="40" max="100" value="92" style="width:90px"></label>
         <button class="btn btn-outline btn-lg" id="newImageBtn" type="button"><svg class="inline-icon"><use href="#i-refresh"/></svg> New image</button>
         <button class="hidden" id="retryBtn" type="button"></button>
       </div>
