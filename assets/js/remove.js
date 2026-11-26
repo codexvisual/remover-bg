@@ -324,7 +324,7 @@
     state.busy = true;
     showError('');
     try {
-      setProgress(6, 'Reading image…');
+      setProgress(6, 'Reading ' + (file.name || 'image') + '…');
       var img = await fileToImage(file);
       var cutout = await removeBackground(file, setProgress);
       setProgress(100, 'Ready!');
@@ -407,10 +407,16 @@
     var format = (el.downloadFormat && el.downloadFormat.value) || 'png';
     var out = makeCanvas(state.resultCanvas.width, state.resultCanvas.height);
     var ctx = out.getContext('2d');
-    if (format === 'png' && state.bg === 'transparent') {
+    if (format === 'png' && state.bg === 'transparent' && !window.__editorGradient) {
       ctx.drawImage(state.resultCanvas, 0, 0);
     } else {
-      if (state.bg === 'white' || state.bg === 'black' || state.bg === 'custom') {
+      if (window.__editorGradient) {
+        var stops = window.__editorGradientStops || ['#8ab4ff', '#c4a4ff'];
+        var grad = ctx.createLinearGradient(0, 0, out.width, out.height);
+        grad.addColorStop(0, stops[0]); grad.addColorStop(1, stops[1] || stops[0]);
+        ctx.fillStyle = grad;
+        ctx.fillRect(0, 0, out.width, out.height);
+      } else if (state.bg === 'white' || state.bg === 'black' || state.bg === 'custom') {
         ctx.fillStyle = state.bgColor;
         ctx.fillRect(0, 0, out.width, out.height);
       } else if (state.gradient) {
@@ -565,6 +571,20 @@
       el.resultCanvas.addEventListener(type, function () { state.drawing = false; state.lastPoint = null; });
     });
   }
+
+  /* Drop anywhere on the page, not just inside the card */
+  document.addEventListener('dragover', function (e) {
+    if (state.busy) return;
+    e.preventDefault();
+  });
+  document.addEventListener('drop', function (e) {
+    if (state.busy) return;
+    var files = e.dataTransfer && e.dataTransfer.files;
+    if (!files || !files.length) return;
+    if (e.target.closest && e.target.closest('#dropzone')) return;
+    e.preventDefault();
+    handleFile(files[0]);
+  });
 
   /* Expose a tiny API for other pages / demos */
   window.RemoveBG = {

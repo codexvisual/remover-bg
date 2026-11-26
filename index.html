@@ -11,6 +11,7 @@
 <link rel="stylesheet" href="assets/css/style.css">
 <link rel="stylesheet" href="assets/css/home.css">
 <link rel="stylesheet" href="assets/css/upload.css">
+<link rel="stylesheet" href="assets/css/editor.css">
 </head>
 <body class="hm-site">
 
@@ -253,6 +254,45 @@
           <button class="btn btn-sm btn-ghost" id="resetBrush" type="button"><svg class="inline-icon"><use href="#i-refresh"/></svg> Reset</button>
         </div>
       </div>
+      <!-- advanced editor -->
+      <div class="editor-row" aria-label="Edit tools">
+        <button class="editor-btn" id="edUndo" type="button" title="Undo (Ctrl+Z)">↶ Undo</button>
+        <button class="editor-btn" id="edRedo" type="button" title="Redo (Ctrl+Shift+Z)">↷ Redo</button>
+        <button class="editor-btn" data-edit="rotL" type="button">⟲ Rotate</button>
+        <button class="editor-btn" data-edit="rotR" type="button">⟳ Rotate</button>
+        <button class="editor-btn" data-edit="flipH" type="button">⇋ Flip H</button>
+        <button class="editor-btn" data-edit="flipV" type="button">↕ Flip V</button>
+        <button class="editor-btn" data-edit="crop" type="button">Crop</button>
+        <button class="editor-btn" id="edCompare" type="button" title="Hold to see original">Compare</button>
+        <span class="editor-info" id="edInfo"></span>
+      </div>
+
+      <div class="editor-row" aria-label="Adjustments">
+        <label class="editor-label">Brightness <input type="range" id="edBright" min="50" max="150" value="100"></label>
+        <label class="editor-label">Contrast <input type="range" id="edContrast" min="50" max="150" value="100"></label>
+        <label class="editor-label">Saturation <input type="range" id="edSaturate" min="0" max="200" value="100"></label>
+        <label class="editor-label">Blur <input type="range" id="edBlur" min="0" max="8" value="0"></label>
+        <button class="editor-btn" id="edResetFilters" type="button">Reset adjustments</button>
+      </div>
+
+      <div class="editor-row hidden" id="cropRow" aria-label="Crop">
+        <span class="editor-label">X <input class="editor-num" id="cropX" type="number" min="0" value="0"></span>
+        <span class="editor-label">Y <input class="editor-num" id="cropY" type="number" min="0" value="0"></span>
+        <span class="editor-label">W <input class="editor-num" id="cropW" type="number" min="1" value="100"></span>
+        <span class="editor-label">H <input class="editor-num" id="cropH" type="number" min="1" value="100"></span>
+        <button class="editor-btn" id="cropApply" type="button">Apply crop</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <p class="tool-label" style="margin-bottom:6px">Background templates</p>
+        <div class="editor-templates">
+          <button class="editor-template t1" type="button" data-template="linear-gradient(135deg,#dbe9ff,#f3e8ff)" title="Soft blue"></button>
+          <button class="editor-template t2" type="button" data-template="linear-gradient(135deg,#ffe6d5,#ffd1dc)" title="Warm"></button>
+          <button class="editor-template t3" type="button" data-template="linear-gradient(135deg,#d9f2e6,#cfe8ff)" title="Fresh"></button>
+          <button class="editor-template t4" type="button" data-template="linear-gradient(135deg,#1e293b,#475569)" title="Dark"></button>
+        </div>
+      </div>
+
       <div class="result-actions">
         <button class="btn btn-primary btn-lg" id="downloadBtn" type="button"><svg class="inline-icon"><use href="#i-download"/></svg> Download image</button>
         <select id="downloadFormat" aria-label="Download format" style="padding:12px;border:1px solid var(--line);border-radius:10px;font-weight:700"><option value="png">PNG (transparent)</option><option value="jpg">JPG (flat background)</option></select>
@@ -270,6 +310,7 @@
 <script src="assets/js/site.js"></script>
 <script src="assets/js/background.js"></script>
 <script src="assets/js/remove.js"></script>
+<script src="assets/js/editor.js"></script>
 <script>
 /* homepage-only wiring: samples, URL toggle, cookie banner */
 (function(){
