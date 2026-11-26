@@ -108,7 +108,7 @@
         image.src = url;
       });
 
-      var cutout = await window.BackgroundEngine.remove(file, setProgress);
+      var cutout = await window.BackgroundEngine.remove(file, setProgress, { sourceImage: img });
       state.file = file;
       state.cutout = cutout;
       state.originalCanvas = document.createElement('canvas');

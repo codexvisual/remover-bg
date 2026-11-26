@@ -74,44 +74,140 @@
       .then(function (blob) { onProgress(90, 'Finishing up…'); return blob; });
   }
 
+  /* ---------- tiny IndexedDB cache: repeat uploads are instant ---------- */
+  var DB_NAME = 'remover-bg-cache', STORE = 'cutouts', dbPromise = null;
+  function openDb() {
+    if (dbPromise) return dbPromise;
+    dbPromise = new Promise(function (resolve, reject) {
+      if (!window.indexedDB) { reject(new Error('no IndexedDB')); return; }
+      var req = indexedDB.open(DB_NAME, 1);
+      req.onupgradeneeded = function () {
+        var db = req.result;
+        if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE);
+      };
+      req.onsuccess = function () { resolve(req.result); };
+      req.onerror = function () { reject(req.error); };
+    });
+    return dbPromise;
+  }
+  function cacheKey(file) {
+    return [file.name || 'image', file.size, file.lastModified || 0].join('|');
+  }
+  function cacheGet(key) {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve) {
+        try {
+          var r = db.transaction(STORE, 'readonly').objectStore(STORE).get(key);
+          r.onsuccess = function () { resolve(r.result || null); };
+          r.onerror = function () { resolve(null); };
+        } catch (e) { resolve(null); }
+      });
+    }).catch(function () { return null; });
+  }
+  function cachePut(key, blob) {
+    return openDb().then(function (db) {
+      return new Promise(function (resolve) {
+        try {
+          var tx = db.transaction(STORE, 'readwrite');
+          tx.objectStore(STORE).put(blob, key);
+          tx.oncomplete = function () { resolve(); };
+          tx.onerror = function () { resolve(); };
+        } catch (e) { resolve(); }
+      });
+    }).then(function () {
+      // Keep the cache small — only the most recent dozen images.
+      return openDb().then(function (db) {
+        try {
+          var store = db.transaction(STORE, 'readonly').objectStore(STORE);
+          var count = store.count();
+          count.onsuccess = function () {
+            if (count.result <= 12) return;
+            var clear = db.transaction(STORE, 'readwrite').objectStore(STORE).clear();
+            try { clear.transaction.oncomplete = function () {}; } catch (e) {}
+          };
+        } catch (e) {}
+      });
+    }).catch(function () {});
+  }
+
+  /* Load the AI module once and keep the import promise for warm-up and
+     first upload. The model itself is cached by the service worker. */
+  var aiPromise = null;
+  function aiModule() {
+    if (!aiPromise) {
+      aiPromise = import(/* @vite-ignore */ CFG.clientModel || 'https://esm.sh/@imgly/background-removal')
+        .catch(function (e) { aiPromise = null; throw e; });
+    }
+    return aiPromise;
+  }
+  function warmAi() {
+    if (CFG.warmupAI === false || !aiModule) return;
+    var conn = navigator.connection || {};
+    if (conn.saveData || /2g|3g/.test(conn.effectiveType || '')) return;
+    aiModule().then(function (mod) {
+      var fn = mod.removeBackground || mod.remove || (mod.default && (mod.default.removeBackground || mod.default.remove));
+      if (!fn) return;
+      var tiny = makeCanvas(16, 16), c = tiny.getContext('2d');
+      c.fillStyle = '#ffffff'; c.fillRect(0, 0, 16, 16);
+      tiny.toBlob(function (blob) {
+        if (!blob) return;
+        fn(blob, {
+          model: 'isnet_quint8', device: 'gpu', proxyToWorker: true,
+          output: { format: 'image/png', quality: 0.6 }
+        }).catch(function () {});
+      }, 'image/png');
+    }).catch(function () {});
+  }
+
   /* Feed the model a downscaled copy — much faster inference with almost
-     no visible loss for web use. Full-resolution input is still used for
-     the offline quick mode and for server-side processing. */
-  function optimizeForAI(file, maxEdge) {
-    return fileToImage(file).then(function (img) {
-      var size = scaledSize(img, maxEdge || 1280);
-      if (size.w === img.naturalWidth && size.h === img.naturalHeight) return file;
+     no visible loss for web use. An already-decoded image can be reused so
+     the file is not decoded twice. */
+  function optimizeForAI(file, maxEdge, sourceImage) {
+    var decode = sourceImage ? Promise.resolve(sourceImage)
+      : (typeof createImageBitmap === 'function'
+        ? createImageBitmap(file).catch(function () { return fileToImage(file); })
+        : fileToImage(file));
+    return decode.then(function (img) {
+      var w = img.naturalWidth || img.width || 1, h = img.naturalHeight || img.height || 1;
+      var size = scaledSize({ naturalWidth: w, naturalHeight: h }, maxEdge || 1024);
+      if (size.w === w && size.h === h) {
+        if (!sourceImage && img.close) img.close();
+        return file;
+      }
       var c = makeCanvas(size.w, size.h);
       c.getContext('2d').drawImage(img, 0, 0, size.w, size.h);
+      if (!sourceImage && img.close) img.close();
       return new Promise(function (resolve) {
         c.toBlob(function (blob) { resolve(blob || file); }, 'image/png');
       });
     }).catch(function () { return file; });
   }
 
-  async function clientRemove(file, onProgress) {
+  async function clientRemove(file, onProgress, opts) {
+    opts = opts || {};
     onProgress(10, 'Loading AI model…');
-    var mod = await import(/* @vite-ignore */ CFG.clientModel || 'https://esm.sh/@imgly/background-removal');
+    var mod = await aiModule();
     var removeFn = mod.removeBackground || mod.remove || (mod.default && (mod.default.removeBackground || mod.default.remove));
     if (!removeFn) throw new Error('AI module could not be loaded.');
-    onProgress(20, 'Optimising image…');
-    var input = await optimizeForAI(file, 1280);
-    onProgress(26, 'Analysing image…');
+    onProgress(18, 'Optimising image…');
+    var input = await optimizeForAI(file, Number(CFG.aiMaxEdge) || 1024, opts.sourceImage);
+    onProgress(24, 'Analysing image…');
     var output = await removeFn(input, {
       model: 'isnet_quint8',
       device: 'gpu',
       proxyToWorker: true,
       output: { format: 'image/png', quality: 1 },
       progress: function (key, current, total) {
-        var pct = 26;
+        var pct = 24;
         if (typeof current === 'number' && typeof total === 'number' && total > 0) {
-          pct = 26 + Math.round((current / total) * 62);
+          pct = 24 + Math.round((current / total) * 64);
         } else if (key === 'inferring') pct = 70;
         onProgress(Math.min(92, pct), 'Removing background…');
       }
     });
     var blob = output instanceof Blob ? output : new Blob([output], { type: 'image/png' });
     onProgress(95, 'Preparing result…');
+    if (blob && blob.size) cachePut(cacheKey(file), blob);
     return blob;
   }
 
@@ -194,20 +290,41 @@
     return Promise.resolve(canvas);
   }
 
-  async function remove(file, onProgress) {
+  async function remove(file, onProgress, opts) {
     onProgress = onProgress || function () {};
+    opts = opts || {};
     var provider = CFG.provider || 'auto';
+
+    // Same picture again? Skip the model entirely.
+    if (provider !== 'server' && provider !== 'fallback') {
+      var hit = await cacheGet(cacheKey(file));
+      if (hit && hit instanceof Blob && hit.size) {
+        onProgress(100, 'Ready — from cache');
+        return blobToCanvas(hit);
+      }
+    }
     if (provider === 'server' || (provider === 'auto' && CFG.apiEndpoint)) {
       try { return await blobToCanvas(await serverRemove(file, onProgress)); }
       catch (e) { console.warn('Server removal failed:', e); }
     }
     if (provider !== 'fallback') {
-      try { return await blobToCanvas(await clientRemove(file, onProgress)); }
+      try { return await blobToCanvas(await clientRemove(file, onProgress, opts)); }
       catch (e) { console.warn('AI unavailable, using quick mode:', e); }
     }
-    var img = await fileToImage(file);
+    var img = opts.sourceImage || await fileToImage(file);
     return quickRemove(img, onProgress);
   }
 
-  window.BackgroundEngine = { remove: remove, fileToImage: fileToImage, makeCanvas: makeCanvas };
+  window.BackgroundEngine = {
+    remove: remove,
+    fileToImage: fileToImage,
+    makeCanvas: makeCanvas,
+    warmup: warmAi
+  };
+
+  // Prime the AI module and model while the visitor is still looking at the
+  // upload form, so the first real removal does not pay the download cost.
+  var prime = function () { setTimeout(warmAi, 1500); };
+  if (document.readyState === 'complete') prime();
+  else window.addEventListener('load', prime);
 })();

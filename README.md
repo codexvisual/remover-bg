@@ -90,8 +90,12 @@ The same editor (including PNG / JPG / WebP export) is available on
 - Service worker (`sw.js`) keeps two caches: app files (network-first, so a
   new deploy is never stale) and AI assets (cache-first). Model files cached by
   older versions are migrated instead of re-downloaded.
-- AI input is downscaled to 1280 px before inference, cutting processing time
-  on large photos.
+- AI input is downscaled to 1024 px before inference, cutting processing time
+  on large photos. The image is decoded once and its decoded bitmap is reused.
+- The AI module is imported once, and the model is warmed in the background
+  while the upload form is still on screen (skipped on save-data / slow links).
+- Repeating the same picture skips the model entirely: a cut-out cache in
+  IndexedDB returns it instantly (last 12 images).
 - WebGPU is used when the browser supports it; WASM is the fallback.
 - The editor writes to the visible canvas, so the brush, edits and export all
   share one buffer.

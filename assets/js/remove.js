@@ -255,9 +255,9 @@
     });
   }
 
-  async function removeBackground(file, onProgress) {
+  async function removeBackground(file, onProgress, opts) {
     if (window.BackgroundEngine && window.BackgroundEngine.remove) {
-      return window.BackgroundEngine.remove(file, onProgress);
+      return window.BackgroundEngine.remove(file, onProgress, opts);
     }
     var provider = CFG.provider || 'auto';
     if (provider === 'server' || (provider === 'auto' && CFG.apiEndpoint)) {
@@ -357,7 +357,7 @@
     try {
       setProgress(6, 'Reading ' + (file.name || 'image') + '…');
       var img = await fileToImage(file);
-      var cutout = await removeBackground(file, setProgress);
+      var cutout = await removeBackground(file, setProgress, { sourceImage: img });
       setProgress(100, 'Ready!');
       showResult(file, img, cutout);
       setTimeout(function () { hideProgress(); hideUploadedPreview(); }, 350);

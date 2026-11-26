@@ -11,5 +11,7 @@ window.REMOVEBG_CONFIG = {
   provider: 'auto',         // 'auto' | 'client' | 'server' | 'fallback'
   clientModel: 'https://esm.sh/@imgly/background-removal',
   fallbackTolerance: 58,    // colour distance used by the built-in quick mode
-  maxFileSizeMB: 15
+  maxFileSizeMB: 15,
+  aiMaxEdge: 1024,          // downscale before inference (speed vs. detail)
+  warmupAI: true            // fetch the model in the background on page load
 };
